@@ -61,7 +61,11 @@ public abstract class Game implements jog.Event.EventHandler {
 	}
 	
 	protected void close() {
-		System.out.println("Successfully closed.");
+		while (SceneManager.scene() != null) {
+			SceneManager.scene().close();
+			SceneManager.returnScene();
+		}
+		System.out.println("[Game] Closed successfully.");
 	}
 	
 	protected void update(double dt) {
