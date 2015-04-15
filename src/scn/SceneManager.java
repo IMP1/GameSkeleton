@@ -34,7 +34,6 @@ public class SceneManager {
 		try {
 			currentScene = sceneStack.pop();
 		} catch (EmptyStackException e) {
-			System.err.println("[Scene Manager] Reached bottom of scene stack.");
 			currentScene = null;
 		}
 	}
