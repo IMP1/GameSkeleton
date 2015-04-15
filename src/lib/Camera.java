@@ -13,17 +13,19 @@ public class Camera {
 	private double zoom;
 	
 	private Rectangle bounds;
+	private Rectangle viewport;
 	
 	public Camera() {
 		x = 0;
 		y = 0;
 		zoom = 1;
 		bounds = null;
+		viewport = new Rectangle(jog.Window.getWidth(), jog.Window.getHeight());
 	}
 	
 	public Camera(int minX, int minY, int maxX, int maxY) {
 		this();
-		setBounds(minX, minY, maxX, maxY);
+		setBounds(minX, minY, maxX - viewport.width, maxY - viewport.height);
 	}
 	
 	public void set() {
@@ -63,6 +65,11 @@ public class Camera {
 	
 	public void setZoom(double newZoom) {
 		zoom = newZoom;
+	}
+	
+	public void centreOn(int x, int y) {
+		setX(x - viewport.width / 2);
+		setY(y - viewport.height / 2);
 	}
 	
 	public void setBounds(int minX, int minY, int maxX, int maxY) {
