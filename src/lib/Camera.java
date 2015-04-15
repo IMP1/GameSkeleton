@@ -28,6 +28,18 @@ public class Camera {
 		setBounds(minX, minY, maxX - viewport.width, maxY - viewport.height);
 	}
 	
+	public double getX() {
+		return x;
+	}
+	
+	public double getY() {
+		return y;
+	}
+	
+	public Rectangle getBounds() {
+		return bounds;
+	}
+	
 	public void set() {
 		Graphics.push();
 		Graphics.scale(zoom, zoom);
@@ -67,7 +79,7 @@ public class Camera {
 		zoom = newZoom;
 	}
 	
-	public void centreOn(int x, int y) {
+	public void centreOn(double x, double y) {
 		setX(x - viewport.width / 2);
 		setY(y - viewport.height / 2);
 	}
