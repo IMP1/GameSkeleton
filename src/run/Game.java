@@ -28,7 +28,6 @@ public abstract class Game implements jog.Event.EventHandler {
 		load(width, height, title, startingScene, windowMode);
 		gameLoop(maxDT);
 		close();
-		System.exit(0);
 	}
 	
 	protected void load(int width, int height, String title, Scene startingScene, jog.Window.WindowMode windowMode) {
@@ -66,6 +65,7 @@ public abstract class Game implements jog.Event.EventHandler {
 			SceneManager.returnScene();
 		}
 		System.out.println("[Game] Closed successfully.");
+		jog.Window.close();
 	}
 	
 	protected void update(double dt) {

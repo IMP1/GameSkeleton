@@ -84,13 +84,17 @@ public abstract class Window {
 	}
 	
 	public static void close() {
+		if (!open) {
+			System.out.println("[Window] Closed.");
+			window.dispose();
+		}
 		open = false;
 	}
 	
 	protected static void abortClosing() {
 		if (!open) {
 			open = true;
-			System.out.println("aborted closing");
+			System.out.println("[Window] Closing Aborted.");
 		}
 	}
 	
