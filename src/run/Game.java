@@ -66,6 +66,7 @@ public abstract class Game implements jog.Event.EventHandler {
 		}
 		System.out.println("[Game] Closed successfully.");
 		jog.Window.close();
+		System.exit(0);
 	}
 	
 	protected void update(double dt) {
