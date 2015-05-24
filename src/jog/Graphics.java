@@ -16,6 +16,7 @@ public abstract class Graphics {
 	private static Graphics2D graphics;
 	private static int width;
 	private static int height;
+	private static Composite previousComposite;
 	private static Stack<AffineTransform> transformations;
 	private static Color backgroundColour;
 	private static double scaleX = 1;
@@ -29,35 +30,44 @@ public abstract class Graphics {
 		scaleY = Window.scaleY;
 		graphics = (Graphics2D)strategy.getDrawGraphics();
 		transformations = new Stack<AffineTransform>();
-		backgroundColour = Color.BLACK;
+		previousComposite = null;
+		setBackgroundColour(Color.BLACK);
 	}
 	
 	public static void clear() {
 		if (transformations.size() == 1)
 			pop();
 		strategy.show();
-		graphics.setColor(backgroundColour);
-		graphics.fillRect(0, 0, width, height);
+		graphics.clearRect(0, 0, width, height);
 		push();
 		scale(scaleX, scaleY);
 		setColour(255, 255, 255, 255);
 	}
 	
 	private static void setAlpha() {
+		previousComposite = graphics.getComposite();
 		float alpha = (float)graphics.getColor().getAlpha() / 255;
 		Composite comp = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha);
         graphics.setComposite(comp);
+	}
+	
+	private static void resetAlpha() {
+		if (previousComposite != null) {
+			graphics.setComposite(previousComposite);
+		}
 	}
 	
 	public static void draw(Image img, double x, double y) {
 		setAlpha();
 //		img.setTint(graphics.getColor()).draw(graphics, x, y);
 		img.draw(graphics, x, y);
+		resetAlpha();
 	}
 
 	public static void drawq(Image img, Rectangle quad, double x, double y) {
 		setAlpha();
 		img.drawq(graphics, quad, x, y);
+		resetAlpha();
 	}
 	
 	public static Color inverse(Color c) {
@@ -90,6 +100,7 @@ public abstract class Graphics {
 	
 	public static void setBackgroundColour(Color colour) {
 		backgroundColour = colour;
+		graphics.setBackground(backgroundColour);
 	}
 	
 	public static void setBackgroundColour(int r, int g, int b) {
