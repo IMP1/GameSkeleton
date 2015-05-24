@@ -61,6 +61,10 @@ public class Animation {
 		jog.Graphics.drawq(image, quads[currentFrame], x, y);
 	}
 	
+	public boolean isOnFrame(int n) {
+		return currentFrame == n;
+	}
+	
 	private double currentFrameDuration() {
 		if (frameDurations.length == frameCount) {
 			return frameDurations[currentFrame];
