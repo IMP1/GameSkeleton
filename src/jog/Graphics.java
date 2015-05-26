@@ -22,6 +22,18 @@ public abstract class Graphics {
 	private static double scaleX = 1;
 	private static double scaleY = 1;
 	
+	public enum HorizontalAlign {
+		LEFT,
+		RIGHT,
+		CENTRE;
+	}
+	
+	public enum VerticalAlign {
+		TOP,
+		MIDDLE,
+		BOTTOM;
+	}
+	
 	public static void initialise() {
 		strategy = Window.canvas.getBufferStrategy();
 		width = Window.canvas.getWidth();
@@ -180,20 +192,12 @@ public abstract class Graphics {
 		}
 	}
 	
-	public enum HorizontalAlign {
-		LEFT,
-		RIGHT,
-		CENTRE;
-	}
-	
-	public enum VerticalAlign {
-		TOP,
-		MIDDLE,
-		BOTTOM;
-	}
-	
 	public static void print(String text, double x, double y) {
 		print(text, x, y, HorizontalAlign.LEFT);
+	}
+	
+	public static void print(String text, double x, double y, VerticalAlign vertAlign) {
+		print(text, x, y, HorizontalAlign.LEFT, vertAlign);
 	}
 	
 	public static void print(String text, double x, double y, HorizontalAlign horizAlign) {
