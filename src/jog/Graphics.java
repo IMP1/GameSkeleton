@@ -180,17 +180,48 @@ public abstract class Graphics {
 		}
 	}
 	
+	public enum HorizontalAlign {
+		LEFT,
+		RIGHT,
+		CENTRE;
+	}
+	
+	public enum VerticalAlign {
+		TOP,
+		MIDDLE,
+		BOTTOM;
+	}
+	
 	public static void print(String text, double x, double y) {
-		// Add font size so text origin is top-left, not bottom-left;
-		graphics.drawString(text, (int)x, (int)y + graphics.getFont().getSize());
+		print(text, x, y, HorizontalAlign.LEFT);
 	}
 	
-	public static void printCentred(String text, double x, double y, double width) {
+	public static void print(String text, double x, double y, HorizontalAlign horizAlign) {
+		print(text, x, y, horizAlign, VerticalAlign.TOP);
+	}
+	
+	public static void print(String text, double x, double y, HorizontalAlign horizAlign, VerticalAlign vertAlign) {
 		double w = graphics.getFont().getStringBounds(text, graphics.getFontRenderContext()).getWidth();
-		x += (width - w) / 2;
-		print(text, x, y);
+		switch (horizAlign) {
+			case RIGHT:  x -= w;	 break;
+			case CENTRE: x -= w / 2; break;
+			case LEFT:
+			default:                 break;
+		}
+		double h = graphics.getFont().getSize();
+		switch (vertAlign) {
+			case TOP:    y += h;     break;
+			case MIDDLE: y += h / 2; break;
+			case BOTTOM:
+			default:                 break;
+		}
+		printText(text, x, y);
 	}
 	
+	private static void printText(String text, double x, double y) {
+		graphics.drawString(text, (int)x, (int)y);
+	}
+
 	public static void translate(double x, double y) {
 		graphics.translate(x, y);
 	}
