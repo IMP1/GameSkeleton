@@ -5,36 +5,40 @@ import scn.*;
 
 public abstract class Game implements jog.Event.EventHandler {
 	
-	private static final String defaultTitle = "Jog Game";
-	private static final int defaultWidth = 800;
-	private static final int defaultHeight = 600;
-	private static final int defualtMinimumFPS = 10;
-	private static final WindowMode defaultWindowMode = WindowMode.WINDOWED;
+	private static final String DEFAULT_TITLE = "Jog Game";
+	private static final int DEFAULT_WIDTH = 800;
+	private static final int DEFAULT_HEIGHT = 600;
+	private static final int DEFAULT_MINIMUM_FPS = 10;
+	private static final WindowMode DEFAULT_WINDOW_MODE = WindowMode.WINDOWED;
 	
 	public Game(Scene startingScene) {
-		this(startingScene, defaultTitle);
+		this(startingScene, DEFAULT_TITLE);
 	}
 	public Game(Scene startingScene, String title) {
-		this(startingScene, title, defaultWidth, defaultHeight);
+		this(startingScene, title, DEFAULT_WIDTH, DEFAULT_HEIGHT);
 	}
 	public Game(Scene startingScene, String title, int width, int height) {
-		this(startingScene, title, width, height, defualtMinimumFPS);
+		this(startingScene, title, width, height, DEFAULT_MINIMUM_FPS);
 	}
 	public Game(Scene startingScene, String title, int width, int height, int minimumFPS) {
-		this(startingScene, title, width, height, minimumFPS, defaultWindowMode);
+		this(startingScene, title, width, height, minimumFPS, DEFAULT_WINDOW_MODE);
 	}
 	public Game(Scene startingScene, String title, int width, int height, int minimumFPS, jog.Window.WindowMode windowMode) {
 		double maxDT = 1.0 / minimumFPS;
-		load(width, height, title, startingScene, windowMode);
+		load(width, height, title, windowMode);
+		setup(startingScene);
 		gameLoop(maxDT);
 		close();
 	}
 	
-	protected void load(int width, int height, String title, Scene startingScene, jog.Window.WindowMode windowMode) {
+	protected void load(int width, int height, String title, jog.Window.WindowMode windowMode) {
 		jog.Window.initialise(width, height, title, windowMode);
 		jog.Input.initialise();
 		jog.Event.setHandler(this);
 		jog.Graphics.initialise();
+	}
+	
+	protected void setup(Scene startingScene) {
 		SceneManager.setScene(startingScene);
 	}
 	
