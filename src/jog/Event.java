@@ -64,44 +64,44 @@ public class Event {
 	}
 	
 	public static void poll(BaseEvent e) {
-		if (handler != null) {
-			switch(e.type) {
-				case FOCUS:
-					handler.focus((boolean)e.params[0]);
-					break;
-				case MOUSE_FOCUS:
-					handler.mouseFocus((boolean)e.params[0]);
-					break;
-				case KEY_PRESSED:
-					handler.keyPressed((int)e.params[0]);
-					break;
-				case KEY_RELASED:
-					handler.keyReleased((int)e.params[0]);
-					break;
-				case MOUSE_MOVED:
-					handler.mouseMoved((int)e.params[0], (int)e.params[1]);
-					break;
-				case MOUSE_SCROLLED:
-					handler.mouseScrolled((int)e.params[0], (int)e.params[1], (int)e.params[2]);
-					break;
-				case MOUSE_PRESSED:
-					handler.mousePressed((int)e.params[0], (int)e.params[1], (int)e.params[2]);
-					break;
-				case MOUSE_RELEASED:
-					handler.mouseReleased((int)e.params[0], (int)e.params[1], (int)e.params[2]);
-					break;
-				case QUIT:
-					boolean abortQuitting = handler.quit();
-					if (abortQuitting) {
-						Window.abortClosing();
-					} else {
-						Window.close();
-					}
-					break;
-				default:
-					System.err.println("[Event] Unrecognised event: " + e.toString());
-					break;
-			}
+		if (handler == null) {
+			if (e.type == EventType.QUIT) Window.close();
+			return;
+		}
+		switch(e.type) {
+			case FOCUS:
+				handler.focus((boolean)e.params[0]);
+				break;
+			case MOUSE_FOCUS:
+				handler.mouseFocus((boolean)e.params[0]);
+				break;
+			case KEY_PRESSED:
+				handler.keyPressed((int)e.params[0]);
+				break;
+			case KEY_RELASED:
+				handler.keyReleased((int)e.params[0]);
+				break;
+			case MOUSE_MOVED:
+				handler.mouseMoved((int)e.params[0], (int)e.params[1]);
+				break;
+			case MOUSE_SCROLLED:
+				handler.mouseScrolled((int)e.params[0], (int)e.params[1], (int)e.params[2]);
+				break;
+			case MOUSE_PRESSED:
+				handler.mousePressed((int)e.params[0], (int)e.params[1], (int)e.params[2]);
+				break;
+			case MOUSE_RELEASED:
+				handler.mouseReleased((int)e.params[0], (int)e.params[1], (int)e.params[2]);
+				break;
+			case QUIT:
+				boolean abortQuitting = handler.quit();
+				if (!abortQuitting) {
+					Window.close();
+				}
+				break;
+			default:
+				System.err.println("[Event] Unrecognised event: " + e.toString());
+				break;
 		}
 	}
 
