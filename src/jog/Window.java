@@ -14,16 +14,18 @@ import java.awt.event.MouseWheelListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
+import java.io.IOException;
+import java.util.ArrayList;
 
-import javax.swing.ImageIcon;
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
 public abstract class Window {
 	
 	public enum WindowMode {
 		WINDOWED,
-		BORDERLESS_WINDOWED,
 		FULLSCREEN,
+		BORDERLESS_WINDOWED,
 		BORDERLESS_FULLSCREEN,
 	}
 	
@@ -84,18 +86,13 @@ public abstract class Window {
 	}
 	
 	public static void close() {
-		if (!open) {
-			System.out.println("[Window] Closed.");
-			window.dispose();
-		}
+		System.out.println("[Window] Closed.");
+		dispose();
 		open = false;
 	}
 	
-	protected static void abortClosing() {
-		if (!open) {
-			open = true;
-			System.out.println("[Window] Closing Aborted.");
-		}
+	public static void dispose() {
+		window.dispose();
 	}
 	
 	public static void initialise(int width, int height, String title) {
@@ -171,11 +168,18 @@ public abstract class Window {
 		canvas.addMouseWheelListener(listener);
 	}
 	
-	public static void setIcon(String filename) {
-		ImageIcon img = new ImageIcon(Filesystem.getPath(filename));
-		window.setIconImage(img.getImage());
+	public static void setIcon(String... filepaths) {
+		ArrayList<java.awt.Image> icons = new ArrayList<java.awt.Image>();
+		for (String path : filepaths) {
+			try {
+				icons.add(ImageIO.read(Filesystem.getURL(path)));
+			} catch (IOException e) {
+				System.err.println("[Window] Could not read image from '" + path + "'.");
+			}
+		}
+		window.setIconImages(icons);
 	}
-	
+
 	public static void setMouseCursor() {
 		setMouseCursor(Cursor.DEFAULT_CURSOR); 
 	}
