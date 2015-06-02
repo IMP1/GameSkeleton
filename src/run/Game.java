@@ -44,6 +44,9 @@ public abstract class Game implements jog.Event.EventHandler {
 			try { Thread.sleep(1); } catch (Exception e) {}; // pause a bit so that we don't choke the system
 			jog.Event.pump();
 			
+			// If we've just quit as a result of an event
+			if (!jog.Window.isOpen()) break;
+			
 			double deltaTime = (double)(System.nanoTime() - lastTick) / 1_000_000_000.0;
 			lastTick = System.nanoTime();
 			// Update multiple times rather than with a dangerously large delta-time
@@ -61,7 +64,6 @@ public abstract class Game implements jog.Event.EventHandler {
 	
 	protected void close() {
 		while (SceneManager.scene() != null) {
-			SceneManager.scene().close();
 			SceneManager.returnScene();
 		}
 		System.out.println("[Game] Closed successfully.");
