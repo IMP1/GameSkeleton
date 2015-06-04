@@ -6,7 +6,10 @@ import java.awt.Dimension;
 import java.awt.DisplayMode;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -32,8 +35,6 @@ public abstract class Window {
 	private static JFrame window;
 	private static boolean open = false;
 	protected static Canvas canvas;
-	protected static double scaleX = 1;
-	protected static double scaleY = 1;
 	
 	public static int getWidth() {
 		return window.getWidth() - window.getInsets().left - window.getInsets().right;
@@ -43,14 +44,16 @@ public abstract class Window {
 		return window.getHeight() - window.getInsets().bottom - window.getInsets().top;
 	}
 	
+	private static GraphicsDevice getDefaultScreen() {
+		return GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+	}
+	
 	public static DisplayMode[] getDisplayModes() {
-		return GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayModes();
+		return getDefaultScreen().getDisplayModes();
 	}
 	
 	public static Rectangle getScreenSize() {
-		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-		GraphicsDevice gd = ge.getDefaultScreenDevice();
-		return gd.getDefaultConfiguration().getBounds();
+		return getDefaultScreen().getDefaultConfiguration().getBounds();
 	}
 	
 	public static int getPositionX() {
@@ -101,8 +104,6 @@ public abstract class Window {
 	public static void initialise(int width, int height, String title, WindowMode mode) {
 		Dimension size;
 		if (mode == WindowMode.BORDERLESS_FULLSCREEN || mode == WindowMode.FULLSCREEN) {
-			scaleX = getScreenSize().getWidth() / width;
-			scaleY = getScreenSize().getHeight() / height;
 			size = new Dimension(getScreenSize().width, getScreenSize().height);
 		} else {
 			size = new Dimension(width, height);
@@ -140,7 +141,12 @@ public abstract class Window {
 			public void windowGainedFocus(WindowEvent e) {
 				jog.Event.push(Event.EventType.FOCUS, true);
 			}
+			
 		});
+		
+		if (mode == WindowMode.FULLSCREEN && GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().isFullScreenSupported()) {
+			GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().setFullScreenWindow(window);
+		}
 		
 		window.setVisible(true);
 		
