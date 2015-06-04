@@ -1,5 +1,8 @@
 package run;
 
+import java.awt.event.KeyEvent;
+
+import jog.Input;
 import jog.Window.WindowMode;
 import scn.*;
 
@@ -105,6 +108,9 @@ public abstract class Game implements jog.Event.EventHandler {
 	@Override
 	public void keyPressed(int key) {
 		SceneManager.scene().keyPressed(key);
+		if (key == KeyEvent.VK_F4 && Input.isKeyDown(KeyEvent.VK_ALT)) {
+			close();
+		}
 	}
 
 	@Override
