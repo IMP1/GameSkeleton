@@ -19,8 +19,6 @@ public abstract class Graphics {
 	private static Composite previousComposite;
 	private static Stack<AffineTransform> transformations;
 	private static Color backgroundColour;
-	private static double scaleX = 1;
-	private static double scaleY = 1;
 	private static Font defaultFont;
 	
 	public enum HorizontalAlign {
@@ -39,8 +37,6 @@ public abstract class Graphics {
 		strategy = Window.canvas.getBufferStrategy();
 		width = Window.canvas.getWidth();
 		height = Window.canvas.getHeight();
-		scaleX = Window.scaleX;
-		scaleY = Window.scaleY;
 		graphics = (Graphics2D)strategy.getDrawGraphics();
 		defaultFont = graphics.getFont();
 		transformations = new Stack<AffineTransform>();
@@ -49,12 +45,8 @@ public abstract class Graphics {
 	}
 	
 	public static void clear() {
-		if (transformations.size() == 1)
-			pop();
 		strategy.show();
 		graphics.clearRect(0, 0, width, height);
-		push();
-		scale(scaleX, scaleY);
 		setColour(255, 255, 255, 255);
 	}
 	
