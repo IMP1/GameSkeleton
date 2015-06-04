@@ -92,4 +92,8 @@ public class Easing {
 		return outcome;
 	}
 	
+	public static double binarySin(double x) {
+		return (Math.sin(x - Math.PI/2) + 1) / 2;
+	}
+	
 }
