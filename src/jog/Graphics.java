@@ -21,6 +21,7 @@ public abstract class Graphics {
 	private static Color backgroundColour;
 	private static double scaleX = 1;
 	private static double scaleY = 1;
+	private static Font defaultFont;
 	
 	public enum HorizontalAlign {
 		LEFT,
@@ -41,6 +42,7 @@ public abstract class Graphics {
 		scaleX = Window.scaleX;
 		scaleY = Window.scaleY;
 		graphics = (Graphics2D)strategy.getDrawGraphics();
+		defaultFont = graphics.getFont();
 		transformations = new Stack<AffineTransform>();
 		previousComposite = null;
 		setBackgroundColour(Color.BLACK);
@@ -117,6 +119,18 @@ public abstract class Graphics {
 	
 	public static void setBackgroundColour(int r, int g, int b) {
 		backgroundColour = new Color(r, g, b);
+	}
+	
+	public static void setFont(Font font) {
+		graphics.setFont(font);
+	}
+	
+	public static void setFont(double fontSize) {
+		graphics.setFont(getFont().deriveFont((float)fontSize));
+	}
+	
+	public static void setFont() {
+		graphics.setFont(defaultFont);
 	}
 	
 	public static Font getFont() {
@@ -205,14 +219,14 @@ public abstract class Graphics {
 	}
 	
 	public static void print(String text, double x, double y, HorizontalAlign horizAlign, VerticalAlign vertAlign) {
-		double w = graphics.getFont().getStringBounds(text, graphics.getFontRenderContext()).getWidth();
+		double w = getFontWidth(text);
 		switch (horizAlign) {
 			case RIGHT:  x -= w;	 break;
 			case CENTRE: x -= w / 2; break;
 			case LEFT:
 			default:                 break;
 		}
-		double h = graphics.getFont().getSize();
+		double h = getFontHeight();
 		switch (vertAlign) {
 			case TOP:    y += h;     break;
 			case MIDDLE: y += h / 2; break;
