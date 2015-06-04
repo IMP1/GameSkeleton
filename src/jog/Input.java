@@ -106,7 +106,7 @@ public abstract class Input {
 	private static ListenerMouse mouseListener;
 	
 	public static void initialise() {
-		keysDown = new boolean[256];
+		keysDown = new boolean[KeyEvent.CHAR_UNDEFINED+1];
 		mouseDown = new boolean[8];
 		keyListener = new ListenerKeyboard();
 		mouseListener = new ListenerMouse();
