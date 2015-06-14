@@ -63,11 +63,27 @@ public abstract class Graphics {
 		}
 	}
 	
+	public static void draw(Image img, double x, double y, double scale) {
+		push();
+		translate(x, y);
+		scale(scale);
+		draw(img, 0, 0);
+		pop();
+	}
+	
 	public static void draw(Image img, double x, double y) {
 		setAlpha();
 //		img.setTint(graphics.getColor()).draw(graphics, x, y);
 		img.draw(graphics, x, y);
 		resetAlpha();
+	}
+	
+	public static void drawq(Image img, Rectangle quad, double x, double y, double scale) {
+		push();
+		translate(x, y);
+		scale(scale);
+		drawq(img, quad, 0, 0);
+		pop();
 	}
 
 	public static void drawq(Image img, Rectangle quad, double x, double y) {
@@ -239,6 +255,10 @@ public abstract class Graphics {
 	public static void scale(double sx, double sy) {
 		graphics.scale(sx, sy);
 	}
+	
+	public static void scale(double scaleFactor) {
+		scale(scaleFactor, scaleFactor);
+	}
 		
 	public static void rotate(double angle) {
 		graphics.rotate(angle);
@@ -255,5 +275,5 @@ public abstract class Graphics {
 	public static void pop() {
 		graphics.setTransform(transformations.pop());
 	}
-	
+
 }
