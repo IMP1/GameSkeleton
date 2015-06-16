@@ -8,18 +8,21 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferStrategy;
+import java.awt.image.BufferedImage;
 import java.util.Stack;
 
 public abstract class Graphics {
 
 	private static BufferStrategy strategy;
-	private static Graphics2D graphics;
+	private static Graphics2D screen;
 	private static int width;
 	private static int height;
 	private static Composite previousComposite;
 	private static Stack<AffineTransform> transformations;
 	private static Color backgroundColour;
 	private static Font defaultFont;
+	private static Graphics2D previousScissor;
+	private static Graphics2D currentCanvas;
 	
 	public enum HorizontalAlign {
 		LEFT,
@@ -33,37 +36,72 @@ public abstract class Graphics {
 		BOTTOM;
 	}
 	
+	public static abstract class Drawable {
+		
+		protected final BufferedImage image;
+		public Drawable(BufferedImage image) {
+			this.image = image;
+		}
+		
+		public int getWidth() {
+			return image.getWidth();
+		}
+		
+		public int getHeight() {
+			return image.getHeight();
+		}
+		
+		protected void draw(Graphics2D g, double x, double y) {
+			g.drawImage(image, (int)x, (int)y, null);
+		}
+		
+		protected void drawq(Graphics2D g, Rectangle quad, double x, double y) {
+			g.drawImage(image, (int)x, (int)y, (int)x + quad.width, (int)y + quad.height, quad.x, quad.y, quad.x + quad.width, quad.y + quad.height, null);
+		}
+		
+	}
+	
+	public static class Canvas extends Drawable {
+		private final Graphics2D graphics;
+		private Canvas(int width, int height) {
+			super(new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB));
+			graphics = image.createGraphics();
+		}
+	}
+	
 	public static void initialise() {
 		strategy = Window.canvas.getBufferStrategy();
 		width = Window.canvas.getWidth();
 		height = Window.canvas.getHeight();
-		graphics = (Graphics2D)strategy.getDrawGraphics();
-		defaultFont = graphics.getFont();
+		screen = (Graphics2D)strategy.getDrawGraphics();
+		defaultFont = screen.getFont();
 		transformations = new Stack<AffineTransform>();
 		previousComposite = null;
+		previousScissor = null;
+		currentCanvas = screen;
 		setBackgroundColour(Color.BLACK);
 	}
 	
 	public static void clear() {
 		strategy.show();
-		graphics.clearRect(0, 0, width, height);
+		screen.clearRect(0, 0, width, height);
 		setColour(255, 255, 255, 255);
 	}
 	
 	private static void setAlpha() {
-		previousComposite = graphics.getComposite();
-		float alpha = (float)graphics.getColor().getAlpha() / 255;
+		previousComposite = currentCanvas.getComposite();
+		float alpha = (float)currentCanvas.getColor().getAlpha() / 255;
 		Composite comp = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha);
-        graphics.setComposite(comp);
+		currentCanvas.setComposite(comp);
 	}
 	
 	private static void resetAlpha() {
 		if (previousComposite != null) {
-			graphics.setComposite(previousComposite);
+			currentCanvas.setComposite(previousComposite);
 		}
 	}
 	
-	public static void draw(Image img, double x, double y, double scale) {
+	public static void draw(Drawable img, double x, double y, double scale) {
 		push();
 		translate(x, y);
 		scale(scale);
@@ -71,14 +109,13 @@ public abstract class Graphics {
 		pop();
 	}
 	
-	public static void draw(Image img, double x, double y) {
+	public static void draw(Drawable img, double x, double y) {
 		setAlpha();
-//		img.setTint(graphics.getColor()).draw(graphics, x, y);
-		img.draw(graphics, x, y);
+		img.draw(currentCanvas, x, y);
 		resetAlpha();
 	}
 	
-	public static void drawq(Image img, Rectangle quad, double x, double y, double scale) {
+	public static void drawq(Drawable img, Rectangle quad, double x, double y, double scale) {
 		push();
 		translate(x, y);
 		scale(scale);
@@ -86,9 +123,9 @@ public abstract class Graphics {
 		pop();
 	}
 
-	public static void drawq(Image img, Rectangle quad, double x, double y) {
+	public static void drawq(Drawable img, Rectangle quad, double x, double y) {
 		setAlpha();
-		img.drawq(graphics, quad, x, y);
+		img.drawq(currentCanvas, quad, x, y);
 		resetAlpha();
 	}
 	
@@ -97,11 +134,11 @@ public abstract class Graphics {
 	}
 	
 	public static Color getColour() {
-		return graphics.getColor();
+		return currentCanvas.getColor();
 	}
 	
 	public static void setColour(Color colour) {
-		graphics.setColor(colour);
+		currentCanvas.setColor(colour);
 	}
 	
 	public static void setColour(int r, int g, int b) {
@@ -113,7 +150,7 @@ public abstract class Graphics {
 		g = Math.max(0, Math.min(g, 255));
 		b = Math.max(0, Math.min(b, 255));
 		a = Math.max(0, Math.min(a, 255));
-		graphics.setColor(new Color(r, g, b, a));
+		currentCanvas.setColor(new Color(r, g, b, a));
 	}
 	
 	public static Color getBackgroundColour() {
@@ -122,48 +159,78 @@ public abstract class Graphics {
 	
 	public static void setBackgroundColour(Color colour) {
 		backgroundColour = colour;
-		graphics.setBackground(backgroundColour);
+		currentCanvas.setBackground(backgroundColour);
 	}
 	
 	public static void setBackgroundColour(int r, int g, int b) {
 		backgroundColour = new Color(r, g, b);
 	}
 	
+	public static void setScissor() {
+		currentCanvas.dispose();
+		currentCanvas = previousScissor;
+	}
+	
+	public static void setScissor(Rectangle rect) {
+		previousScissor = (Graphics2D)currentCanvas.create();
+		currentCanvas.setClip(rect);
+	}
+	
+	public static Canvas newCanvas() {
+		return newCanvas(width, height);
+	}
+	
+	public static void setCanvas() {
+		currentCanvas = screen;
+	}
+	
+	public static void setCanvas(Canvas canvas) {
+		currentCanvas = canvas.graphics;
+	}
+	
+	public static Canvas newCanvas(int width, int height) {
+		return new Canvas(width, height);
+	}
+	
 	public static void setFont(Font font) {
-		graphics.setFont(font);
+		currentCanvas.setFont(font);
 	}
 	
 	public static void setFont(double fontSize) {
-		graphics.setFont(getFont().deriveFont((float)fontSize));
+		currentCanvas.setFont(getFont().deriveFont((float)fontSize));
 	}
 	
 	public static void setFont() {
-		graphics.setFont(defaultFont);
+		currentCanvas.setFont(defaultFont);
 	}
 	
 	public static Font getFont() {
-		return graphics.getFont();
+		return currentCanvas.getFont();
 	}
 	
 	public static int getFontWidth(String text) {
-		return graphics.getFontMetrics().stringWidth(text);
+		return currentCanvas.getFontMetrics().stringWidth(text);
 	}
 	
 	public static int getFontHeight(String text) {
 		int lines = text.split("\n").length;
-		return graphics.getFontMetrics().getHeight() * lines;
+		return currentCanvas.getFontMetrics().getHeight() * lines;
+	}
+	
+	public static void rectangle(boolean fill, Rectangle rect) {
+		rectangle(fill, rect.x, rect.y, rect.width, rect.height);
 	}
 	
 	public static void rectangle(boolean fill, double x, double y, double width, double height) {
 		if (fill) {
-			graphics.fillRect((int)x, (int)y, (int)width, (int)height);
+			currentCanvas.fillRect((int)x, (int)y, (int)width, (int)height);
 		} else {
-			graphics.drawRect((int)x, (int)y, (int)width, (int)height);
+			currentCanvas.drawRect((int)x, (int)y, (int)width, (int)height);
 		}
 	}
 	
 	public static void roundedRectangle(boolean fill, double x, double y, double width, double height, double radius) {
-		graphics.drawRoundRect((int)x, (int)y, (int)width, (int)height, (int)radius, (int)radius);
+		currentCanvas.drawRoundRect((int)x, (int)y, (int)width, (int)height, (int)radius, (int)radius);
 	}
 	
 	public static void arc(boolean fill, double x, double y, double radius, double startAngle, double endAngle) {
@@ -175,9 +242,9 @@ public abstract class Graphics {
 		int xPos = (int)x - width / 2;
 		int yPos = (int)y - height / 2;
 		if (fill) {
-			graphics.fillArc(xPos, yPos, width, height, angleBegin, angleSize);
+			currentCanvas.fillArc(xPos, yPos, width, height, angleBegin, angleSize);
 		} else {
-			graphics.drawArc(xPos, yPos, width, height, angleBegin, angleSize);
+			currentCanvas.drawArc(xPos, yPos, width, height, angleBegin, angleSize);
 		}
 	}
 	
@@ -195,7 +262,7 @@ public abstract class Graphics {
 				yPoints[i/2] = (int)points[i];
 			}
 		}
-		graphics.drawPolyline(xPoints, yPoints, xPoints.length);
+		currentCanvas.drawPolyline(xPoints, yPoints, xPoints.length);
 	}
 	
 	public static void polygon(boolean fill, double... points) {
@@ -209,9 +276,9 @@ public abstract class Graphics {
 			}
 		}
 		if (fill) {
-			graphics.fillPolygon(xPoints, yPoints, xPoints.length);
+			currentCanvas.fillPolygon(xPoints, yPoints, xPoints.length);
 		} else {
-			graphics.drawPolygon(xPoints, yPoints, xPoints.length);
+			currentCanvas.drawPolygon(xPoints, yPoints, xPoints.length);
 		}
 	}
 	
@@ -221,6 +288,10 @@ public abstract class Graphics {
 
 	public static void printCentred(String text, double x, double y) {
 		print(text, x, y, getFontWidth(text), getFontHeight(text), HorizontalAlign.CENTRE, VerticalAlign.TOP);
+	}
+	
+	public static void print(String text, double x, double y, double w, double h, HorizontalAlign horizAlign) {
+		print(text, x, y, w, h, horizAlign, VerticalAlign.TOP);
 	}
 	
 	public static void print(String text, double x, double y, double w, double h, VerticalAlign vertAlign) {
@@ -253,15 +324,15 @@ public abstract class Graphics {
 	}
 	
 	private static void printText(String text, double x, double y) {
-		graphics.drawString(text, (int)x, (int)y);
+		currentCanvas.drawString(text, (int)x, (int)y);
 	}
 
 	public static void translate(double x, double y) {
-		graphics.translate(x, y);
+		currentCanvas.translate(x, y);
 	}
 	
 	public static void scale(double sx, double sy) {
-		graphics.scale(sx, sy);
+		currentCanvas.scale(sx, sy);
 	}
 	
 	public static void scale(double scaleFactor) {
@@ -269,19 +340,19 @@ public abstract class Graphics {
 	}
 		
 	public static void rotate(double angle) {
-		graphics.rotate(angle);
+		currentCanvas.rotate(angle);
 	}
 	
 	public static void shear(double shx, double shy) {
-		graphics.shear(shx, shy);
+		currentCanvas.shear(shx, shy);
 	}
 
 	public static void push() {
-		transformations.push(graphics.getTransform());
+		transformations.push(currentCanvas.getTransform());
 	}
 	
 	public static void pop() {
-		graphics.setTransform(transformations.pop());
+		currentCanvas.setTransform(transformations.pop());
 	}
 
 }
