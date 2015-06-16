@@ -31,8 +31,8 @@ public abstract class Button {
 		this.pressed = false;
 	}
 	
-	public void setDisabled(boolean disabled) {
-		this.disabled = disabled;
+	public void setEnabled(boolean enabled) {
+		this.disabled = !enabled;
 	}
 	
 	public void update() {
