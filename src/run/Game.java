@@ -49,13 +49,9 @@ public abstract class Game implements jog.Event.EventHandler {
 		long lastTick = System.nanoTime();
 		while (jog.Window.isOpen()) {
 			try { Thread.sleep(1); } catch (Exception e) {}; // pause a bit so that we don't choke the system
-			jog.Event.pump();
-			
-			// If we've just quit as a result of an event
-			if (!jog.Window.isOpen()) break;
-			
 			double deltaTime = (double)(System.nanoTime() - lastTick) / 1_000_000_000.0;
 			lastTick = System.nanoTime();
+			
 			// Update multiple times rather than with a dangerously large delta-time
 			while (deltaTime > maxDT) {
 				update(maxDT);
@@ -63,6 +59,10 @@ public abstract class Game implements jog.Event.EventHandler {
 			}
 			if (deltaTime > 0)
 				update(deltaTime);
+			
+			jog.Event.pump();
+			// If we've just quit as a result of an event
+			if (!jog.Window.isOpen()) break;
 			
 			jog.Graphics.clear();
 			draw();
