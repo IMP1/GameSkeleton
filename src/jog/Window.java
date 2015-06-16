@@ -6,10 +6,7 @@ import java.awt.Dimension;
 import java.awt.DisplayMode;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
-import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -28,6 +25,7 @@ public abstract class Window {
 	public enum WindowMode {
 		WINDOWED,
 		FULLSCREEN,
+		WINDOWED_FULLSCREEN,
 		BORDERLESS_WINDOWED,
 		BORDERLESS_FULLSCREEN,
 	}
@@ -113,12 +111,23 @@ public abstract class Window {
 		canvas.setPreferredSize(size);
 		
 		window = new JFrame();
-		window.setResizable(false);
 		window.add(canvas);
 		if (mode == WindowMode.BORDERLESS_FULLSCREEN || mode == WindowMode.BORDERLESS_WINDOWED) {
 			window.setUndecorated(true);
 		}
+		
 		window.pack();
+		
+		if (mode == WindowMode.FULLSCREEN && GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().isFullScreenSupported()) {
+			GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().setFullScreenWindow(window);
+		}
+		
+		if (mode == WindowMode.WINDOWED_FULLSCREEN) {
+			Rectangle r = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+			window.setSize(r.width, r.height);
+		}
+		
+		window.setResizable(false);
 		window.setTitle(title);
 		window.setLocationRelativeTo(null);
 		
@@ -143,10 +152,6 @@ public abstract class Window {
 			}
 			
 		});
-		
-		if (mode == WindowMode.FULLSCREEN && GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().isFullScreenSupported()) {
-			GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().setFullScreenWindow(window);
-		}
 		
 		window.setVisible(true);
 		
