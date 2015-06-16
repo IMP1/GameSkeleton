@@ -149,8 +149,9 @@ public abstract class Graphics {
 		return graphics.getFontMetrics().stringWidth(text);
 	}
 	
-	public static int getFontHeight() {
-		return graphics.getFontMetrics().getHeight();
+	public static int getFontHeight(String text) {
+		int lines = text.split("\n").length;
+		return graphics.getFontMetrics().getHeight() * lines;
 	}
 	
 	public static void rectangle(boolean fill, double x, double y, double width, double height) {
@@ -215,31 +216,38 @@ public abstract class Graphics {
 	}
 	
 	public static void print(String text, double x, double y) {
-		print(text, x, y, HorizontalAlign.LEFT);
+		printText(text, x, y);
+	}
+
+	public static void printCentred(String text, double x, double y) {
+		print(text, x, y, getFontWidth(text), getFontHeight(text), HorizontalAlign.CENTRE, VerticalAlign.TOP);
 	}
 	
-	public static void print(String text, double x, double y, VerticalAlign vertAlign) {
-		print(text, x, y, HorizontalAlign.LEFT, vertAlign);
+	public static void print(String text, double x, double y, double w, double h, VerticalAlign vertAlign) {
+		print(text, x, y, w, h, HorizontalAlign.LEFT, vertAlign);
 	}
 	
-	public static void print(String text, double x, double y, HorizontalAlign horizAlign) {
-		print(text, x, y, horizAlign, VerticalAlign.TOP);
-	}
-	
-	public static void print(String text, double x, double y, HorizontalAlign horizAlign, VerticalAlign vertAlign) {
-		double w = getFontWidth(text);
+	public static void print(String text, double x, double y, double w, double h, HorizontalAlign horizAlign, VerticalAlign vertAlign) {
+		int fontWidth = getFontWidth(text);
 		switch (horizAlign) {
-			case RIGHT:  x -= w;	 break;
-			case CENTRE: x -= w / 2; break;
+			case RIGHT:  x += w;
+						 x -= fontWidth;
+						 break;
+			case CENTRE: x += w / 2;
+						 x -= fontWidth / 2;
+						 break;
 			case LEFT:
-			default:                 break;
+			default:     break;
 		}
-		double h = getFontHeight();
+		int fontHeight = getFontHeight(text);
 		switch (vertAlign) {
-			case TOP:    y += h;     break;
-			case MIDDLE: y += h / 2; break;
-			case BOTTOM:
-			default:                 break;
+			case TOP:    y += fontHeight;
+						 break;
+			case MIDDLE: y += h / 2;
+						 y += fontHeight / 2;
+						 break;
+			case BOTTOM: y += h;
+			default:     break;
 		}
 		printText(text, x, y);
 	}
