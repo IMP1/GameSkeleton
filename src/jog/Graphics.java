@@ -21,7 +21,6 @@ public abstract class Graphics {
 	private static Stack<AffineTransform> transformations;
 	private static Color backgroundColour;
 	private static Font defaultFont;
-	private static Graphics2D previousScissor;
 	private static Graphics2D currentCanvas;
 	
 	public enum HorizontalAlign {
@@ -41,6 +40,10 @@ public abstract class Graphics {
 		protected final BufferedImage image;
 		public Drawable(BufferedImage image) {
 			this.image = image;
+		}
+		
+		public Drawable(jog.Image img) {
+			this(img.image);
 		}
 		
 		public int getWidth() {
@@ -67,6 +70,8 @@ public abstract class Graphics {
 			super(new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB));
 			graphics = image.createGraphics();
 		}
+		public int getWidth()  { return image.getWidth(); }
+		public int getHeight() { return image.getHeight(); }
 	}
 	
 	public static void initialise() {
@@ -77,7 +82,6 @@ public abstract class Graphics {
 		defaultFont = screen.getFont();
 		transformations = new Stack<AffineTransform>();
 		previousComposite = null;
-		previousScissor = null;
 		currentCanvas = screen;
 		setBackgroundColour(Color.BLACK);
 	}
@@ -98,6 +102,7 @@ public abstract class Graphics {
 	private static void resetAlpha() {
 		if (previousComposite != null) {
 			currentCanvas.setComposite(previousComposite);
+			previousComposite = null;
 		}
 	}
 	
@@ -167,12 +172,10 @@ public abstract class Graphics {
 	}
 	
 	public static void setScissor() {
-		currentCanvas.dispose();
-		currentCanvas = previousScissor;
+		currentCanvas.setClip(null);
 	}
 	
 	public static void setScissor(Rectangle rect) {
-		previousScissor = (Graphics2D)currentCanvas.create();
 		currentCanvas.setClip(rect);
 	}
 	
@@ -287,7 +290,7 @@ public abstract class Graphics {
 	}
 
 	public static void printCentred(String text, double x, double y) {
-		print(text, x, y, getFontWidth(text), getFontHeight(text), HorizontalAlign.CENTRE, VerticalAlign.TOP);
+		print(text, x, y, 0, 0, HorizontalAlign.CENTRE, VerticalAlign.TOP);
 	}
 	
 	public static void print(String text, double x, double y, double w, double h, HorizontalAlign horizAlign) {
