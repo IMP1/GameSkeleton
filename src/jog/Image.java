@@ -7,8 +7,16 @@ import javax.imageio.ImageIO;
 
 public class Image extends Graphics.Drawable {
 
-	public Image(String path) throws IOException {
-		super(ImageIO.read(Filesystem.getURL(path)));
+	private static BufferedImage readImage(String path) {
+		try {
+			return ImageIO.read(Filesystem.getURL(path));
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	public Image(String path) {
+		super(readImage(path));
 		System.out.println("[Image] " + path + " loaded.");
 	}
 	
