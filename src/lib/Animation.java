@@ -1,14 +1,17 @@
 package lib;
 
+import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
-public class Animation {
+import jog.Graphics.Drawable;
+import jog.Image;
+
+public class Animation extends Drawable {
 
 	private double[] frameDurations;
 	private int frameCount;
 	private boolean looping;
 	
-	private jog.Image image;
 	private Rectangle[] quads;
 	
 	private int currentFrame;
@@ -16,8 +19,9 @@ public class Animation {
 	private boolean started;
 	private boolean finished;
 	
-	public Animation(jog.Image img, int framesWide, int framesHigh, int frames, boolean loop, double... frameTimes) {
-		image = img;
+
+	public Animation(Image img, int framesWide, int framesHigh, int frames, boolean loop, double... frameTimes) {
+		super(img);
 		frameCount = frames;
 		frameDurations = frameTimes;
 		looping = loop;
@@ -56,11 +60,7 @@ public class Animation {
 			nextFrame();
 		}
 	}
-	
-	public void draw(double x, double y) {
-		jog.Graphics.drawq(image, quads[currentFrame], x, y);
-	}
-	
+
 	public boolean isOnFrame(int n) {
 		return currentFrame == n;
 	}
@@ -83,6 +83,24 @@ public class Animation {
 				finished = true;
 			}
 		}
+	}
+	
+	protected void draw(Graphics2D g, double x, double y) {
+		int qx = quads[currentFrame].x;
+		int qy = quads[currentFrame].y;
+		int qw = quads[currentFrame].width;
+		int qh = quads[currentFrame].height;
+		g.drawImage(image, (int)x, (int)y, (int)x + qw, (int)y + qh, qx, qy, qx + qw, qy + qh, null);
+	}
+	
+	@Override
+	public int getWidth() {
+		return quads[currentFrame].width;
+	}
+	
+	@Override
+	public int getHeight() {
+		return quads[currentFrame].height;
 	}
 
 }
