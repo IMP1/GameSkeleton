@@ -141,8 +141,6 @@ public abstract class Game implements jog.Event.EventHandler {
 	@Override
 	public boolean quit() {
 		return SceneManager.scene().quit();
-	}
-	
-	
+	}	
 
 }

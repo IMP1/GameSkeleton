@@ -14,7 +14,6 @@ public abstract class Button {
 	public void addListener(ButtonListener listener) {
 		listeners.add(listener);
 	}
-	
 
 	protected boolean disabled;
 	protected boolean hover;
