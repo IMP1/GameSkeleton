@@ -1,16 +1,31 @@
 package jog;
 
-import java.util.ArrayList;;
+import java.util.ArrayList;
 
 public class Event {
 	
 	private static Object monitor = new Object();
-	protected static ArrayList<BaseEvent> eventQueueBuffered = new ArrayList<BaseEvent>();
+	protected static ArrayList<BaseEvent> eventBuffer = new ArrayList<BaseEvent>();
 	private static BaseEvent[] queue = new BaseEvent[0];
 	private static EventHandler handler = null;
 	
 	public static void setHandler(EventHandler newHandler) {
 		handler = newHandler;
+	}
+	
+	public enum EventType {
+		// Keyboard
+		KEY_PRESSED,
+		KEY_RELASED,
+		// Mouse
+		MOUSE_MOVED,
+		MOUSE_SCROLLED,
+		MOUSE_PRESSED,
+		MOUSE_RELEASED,
+		MOUSE_FOCUS,
+		// Window
+		FOCUS,
+		QUIT,
 	}
 	
 	private static class BaseEvent {
@@ -20,18 +35,6 @@ public class Event {
 			this.type = type;
 			this.params = params;
 		}
-	}
-	
-	protected enum EventType {
-		FOCUS,
-		MOUSE_FOCUS,
-		KEY_PRESSED,
-		KEY_RELASED,
-		MOUSE_MOVED,
-		MOUSE_SCROLLED,
-		MOUSE_PRESSED,
-		MOUSE_RELEASED,
-		QUIT,
 	}
 	
 	public interface EventHandler {
@@ -49,14 +52,14 @@ public class Event {
 	
 	public static void push(EventType type, Object... params) {
 		synchronized (monitor) {
-			eventQueueBuffered.add(new BaseEvent(type, params));
+			eventBuffer.add(new BaseEvent(type, params));
 		}
 	}
 	
 	public static void pump() {
 		synchronized (monitor) {
-			queue = eventQueueBuffered.toArray(new BaseEvent[0]);
-			eventQueueBuffered.clear();
+			queue = eventBuffer.toArray(new BaseEvent[0]);
+			eventBuffer.clear();
 		}
 		for (int i = 0; i < queue.length; i ++) {
 			poll(queue[i]);
@@ -75,12 +78,6 @@ public class Event {
 			case MOUSE_FOCUS:
 				handler.mouseFocus((boolean)e.params[0]);
 				break;
-			case KEY_PRESSED:
-				handler.keyPressed((int)e.params[0]);
-				break;
-			case KEY_RELASED:
-				handler.keyReleased((int)e.params[0]);
-				break;
 			case MOUSE_MOVED:
 				handler.mouseMoved((int)e.params[0], (int)e.params[1]);
 				break;
@@ -92,6 +89,12 @@ public class Event {
 				break;
 			case MOUSE_RELEASED:
 				handler.mouseReleased((int)e.params[0], (int)e.params[1], (int)e.params[2]);
+				break;
+			case KEY_PRESSED:
+				handler.keyPressed((int)e.params[0]);
+				break;
+			case KEY_RELASED:
+				handler.keyReleased((int)e.params[0]);
 				break;
 			case QUIT:
 				boolean abortQuitting = handler.quit();
