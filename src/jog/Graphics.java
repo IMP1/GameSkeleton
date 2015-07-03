@@ -233,7 +233,11 @@ public abstract class Graphics {
 	}
 	
 	public static void roundedRectangle(boolean fill, double x, double y, double width, double height, double radius) {
-		currentCanvas.drawRoundRect((int)x, (int)y, (int)width, (int)height, (int)radius, (int)radius);
+		if (fill) {
+			currentCanvas.fillRoundRect((int)x, (int)y, (int)width, (int)height, (int)radius, (int)radius);
+		} else {
+			currentCanvas.drawRoundRect((int)x, (int)y, (int)width, (int)height, (int)radius, (int)radius);
+		}
 	}
 	
 	public static void arc(boolean fill, double x, double y, double radius, double startAngle, double endAngle) {
