@@ -9,17 +9,6 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
 public abstract class Input {
-//	
-//	public enum MouseKey {
-//		L(MouseEvent.BUTTON1);
-//		public boolean is() {
-//			return 
-//		}
-//		private final int key;
-//		private MouseKey(int key) {
-//			this.key = key;
-//		}
-//	}
 
 	private static class ListenerKeyboard implements KeyListener {
 		
