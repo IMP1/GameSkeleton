@@ -142,8 +142,28 @@ public class Gamepad extends Thread {
 	}
 	
 	private double[] getLeftAxis() {
-		double x = controller.getComponent(Component.Identifier.Axis.X).getPollData();
-		double y = controller.getComponent(Component.Identifier.Axis.Y).getPollData();
+		return getAxis(Component.Identifier.Axis.X, Component.Identifier.Axis.Y);
+	}
+
+	public double getRightAxisHorizontal() {
+		return getRightAxis()[0];
+	}
+	
+	public double getRightAxisVertical() {
+		return getRightAxis()[1];
+	}
+	
+	private double[] getRightAxis() {
+		if (controller.getType() == Controller.Type.STICK) {
+			return getAxis(Component.Identifier.Axis.Z, Component.Identifier.Axis.RZ);
+		} else {
+			return getAxis(Component.Identifier.Axis.RX, Component.Identifier.Axis.RY);
+		}
+	}
+	
+	private double[] getAxis(Identifier horizontal, Identifier vertical) {
+		double x = controller.getComponent(horizontal).getPollData();
+		double y = controller.getComponent(vertical).getPollData();
 		double[] axes = { x, y };
 		double magnitude = Math.sqrt(x * x + y * y);
 		if (magnitude < DEAD_ZONE) {
@@ -154,26 +174,6 @@ public class Gamepad extends Thread {
 			axes[1] = (y / magnitude) * (magnitude - DEAD_ZONE) / (1 - DEAD_ZONE);
 		}
 		return axes;
-	}
-	
-	public double getRightAxisHorizontal() {
-		Identifier identifier;
-		if (controller.getType() == Controller.Type.STICK) {
-			identifier = Component.Identifier.Axis.Z;
-		} else {
-			identifier = Component.Identifier.Axis.RX;
-		}
-		return controller.getComponent(identifier).getPollData();
-	}
-	
-	public double getRightAxisVertical() {
-		Identifier identifier;
-		if (this.controller.getType() == Controller.Type.STICK) {
-			identifier = Component.Identifier.Axis.RZ;
-        } else {
-        	identifier = Component.Identifier.Axis.RY;
-        }
-		return controller.getComponent(identifier).getPollData();
 	}
 	
 }
