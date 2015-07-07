@@ -4,7 +4,6 @@ import java.awt.event.KeyEvent;
 
 import jog.Input;
 import jog.Window.WindowMode;
-import lib.gamepad.GamepadManager;
 import scn.*;
 
 public abstract class Game implements jog.Event.EventHandler {
