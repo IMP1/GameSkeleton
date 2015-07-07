@@ -77,7 +77,7 @@ public class GamepadManager {
 			eventBuffer.clear();
 		}
 		for (int i = 0; i < queue.length; i ++) {
-			poll(queue[i]);
+			System.out.println(queue[i]);
 		}
 	}
 
