@@ -15,14 +15,14 @@ public class GamepadManager {
 	
 	private static ArrayList<Gamepad> gamepads;
 	
-	private static GamepadHandler handler = null;
+	private static ArrayList<GeneralGamepadHandler> generalHandlers = new ArrayList<GeneralGamepadHandler>();
 	private static HashMap<Gamepad, GamepadHandler> handlers = new HashMap<Gamepad, GamepadHandler>();
 
-	public static void setHandler(GamepadHandler newHandler) {
-		handler = newHandler;
+	public static void addGeneralHandler(GeneralGamepadHandler newHandler) {
+		generalHandlers.add(newHandler);
 	}
 	
-	public static void setHandler(Gamepad controller, GamepadHandler newHandler) {
+	public static void addHandler(Gamepad controller, GamepadHandler newHandler) {
 		handlers.put(controller, newHandler);
 	}
 	
@@ -42,9 +42,14 @@ public class GamepadManager {
 		RECONNECTED,
 	}
 
-	public interface GamepadHandler {
+	public interface GeneralGamepadHandler {
 		public void buttonPressed(Gamepad controller, int button);
 		public void buttonReleased(Gamepad controller, int button);
+	}
+	
+	public interface GamepadHandler {
+		public void buttonPressed(int button);
+		public void buttonReleased(int button);
 	}
 
 	public static void intitialise() {
@@ -77,25 +82,31 @@ public class GamepadManager {
 			eventBuffer.clear();
 		}
 		for (int i = 0; i < queue.length; i ++) {
-			System.out.println(queue[i]);
+			poll(queue[i]);
 		}
 	}
 
 	public static void poll(BaseEvent e) {
-		if (handler == null && handlers.isEmpty()) {
+		if (generalHandlers == null && handlers.isEmpty()) {
 			return;
 		}
 		switch(e.type) {
 			case BUTTON_PRESSED:
-				if (handler != null) handler.buttonPressed((Gamepad)e.params[0], (int)e.params[1]);
+				for (GeneralGamepadHandler g : generalHandlers) {
+					g.buttonPressed((Gamepad)e.params[0], (int)e.params[1]);
+				}
 				for (Gamepad g : handlers.keySet()) {
-					handlers.get(g).buttonPressed((Gamepad)e.params[0], (int)e.params[1]);
+					if (g.equals((Gamepad)e.params[0]))
+						handlers.get(g).buttonPressed((int)e.params[1]);
 				}
 				break;
 			case BUTTON_RELEASED:
-				if (handler != null) handler.buttonReleased((Gamepad)e.params[0], (int)e.params[1]);
+				for (GeneralGamepadHandler g : generalHandlers) {
+					g.buttonReleased((Gamepad)e.params[0], (int)e.params[1]);
+				}
 				for (Gamepad g : handlers.keySet()) {
-					handlers.get(g).buttonReleased((Gamepad)e.params[0], (int)e.params[1]);
+					if (g.equals((Gamepad)e.params[0]))
+						handlers.get(g).buttonReleased((int)e.params[1]);
 				}
 				break;
 			case DISCONNECTED:
