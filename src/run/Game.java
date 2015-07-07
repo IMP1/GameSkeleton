@@ -4,6 +4,7 @@ import java.awt.event.KeyEvent;
 
 import jog.Input;
 import jog.Window.WindowMode;
+import lib.gamepad.GamepadManager;
 import scn.*;
 
 public abstract class Game implements jog.Event.EventHandler {
@@ -60,13 +61,17 @@ public abstract class Game implements jog.Event.EventHandler {
 			if (deltaTime > 0)
 				update(deltaTime);
 			
-			jog.Event.pump();
+			updateInput();
 			// If we've just quit as a result of an event
 			if (!jog.Window.isOpen()) break;
 			
 			jog.Graphics.clear();
 			draw();
 		}
+	}
+	
+	protected void updateInput() {
+		jog.Event.pump();
 	}
 	
 	protected void close() {
