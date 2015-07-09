@@ -14,24 +14,25 @@ import java.awt.event.MouseWheelListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
+import java.io.IOException;
+import java.util.ArrayList;
 
-import javax.swing.ImageIcon;
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
 public abstract class Window {
 	
 	public enum WindowMode {
 		WINDOWED,
-		BORDERLESS_WINDOWED,
 		FULLSCREEN,
+		WINDOWED_FULLSCREEN,
+		BORDERLESS_WINDOWED,
 		BORDERLESS_FULLSCREEN,
 	}
 	
 	private static JFrame window;
 	private static boolean open = false;
 	protected static Canvas canvas;
-	protected static double scaleX = 1;
-	protected static double scaleY = 1;
 	
 	public static int getWidth() {
 		return window.getWidth() - window.getInsets().left - window.getInsets().right;
@@ -41,14 +42,16 @@ public abstract class Window {
 		return window.getHeight() - window.getInsets().bottom - window.getInsets().top;
 	}
 	
+	private static GraphicsDevice getDefaultScreen() {
+		return GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+	}
+	
 	public static DisplayMode[] getDisplayModes() {
-		return GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayModes();
+		return getDefaultScreen().getDisplayModes();
 	}
 	
 	public static Rectangle getScreenSize() {
-		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-		GraphicsDevice gd = ge.getDefaultScreenDevice();
-		return gd.getDefaultConfiguration().getBounds();
+		return getDefaultScreen().getDefaultConfiguration().getBounds();
 	}
 	
 	public static int getPositionX() {
@@ -84,14 +87,13 @@ public abstract class Window {
 	}
 	
 	public static void close() {
+		System.out.println("[Window] Closed.");
+		dispose();
 		open = false;
 	}
 	
-	protected static void abortClosing() {
-		if (!open) {
-			open = true;
-			System.out.println("aborted closing");
-		}
+	public static void dispose() {
+		window.dispose();
 	}
 	
 	public static void initialise(int width, int height, String title) {
@@ -100,8 +102,6 @@ public abstract class Window {
 	public static void initialise(int width, int height, String title, WindowMode mode) {
 		Dimension size;
 		if (mode == WindowMode.BORDERLESS_FULLSCREEN || mode == WindowMode.FULLSCREEN) {
-			scaleX = getScreenSize().getWidth() / width;
-			scaleY = getScreenSize().getHeight() / height;
 			size = new Dimension(getScreenSize().width, getScreenSize().height);
 		} else {
 			size = new Dimension(width, height);
@@ -111,12 +111,23 @@ public abstract class Window {
 		canvas.setPreferredSize(size);
 		
 		window = new JFrame();
-		window.setResizable(false);
 		window.add(canvas);
 		if (mode == WindowMode.BORDERLESS_FULLSCREEN || mode == WindowMode.BORDERLESS_WINDOWED) {
 			window.setUndecorated(true);
 		}
+		
 		window.pack();
+		
+		if (mode == WindowMode.FULLSCREEN && GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().isFullScreenSupported()) {
+			GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().setFullScreenWindow(window);
+		}
+		
+		if (mode == WindowMode.WINDOWED_FULLSCREEN) {
+			Rectangle r = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+			window.setSize(r.width, r.height);
+		}
+		
+		window.setResizable(false);
 		window.setTitle(title);
 		window.setLocationRelativeTo(null);
 		
@@ -139,6 +150,7 @@ public abstract class Window {
 			public void windowGainedFocus(WindowEvent e) {
 				jog.Event.push(Event.EventType.FOCUS, true);
 			}
+			
 		});
 		
 		window.setVisible(true);
@@ -167,11 +179,18 @@ public abstract class Window {
 		canvas.addMouseWheelListener(listener);
 	}
 	
-	public static void setIcon(String filename) {
-		ImageIcon img = new ImageIcon(Filesystem.getPath(filename));
-		window.setIconImage(img.getImage());
+	public static void setIcon(String... filepaths) {
+		ArrayList<java.awt.Image> icons = new ArrayList<java.awt.Image>();
+		for (String path : filepaths) {
+			try {
+				icons.add(ImageIO.read(Filesystem.getURL(path)));
+			} catch (IOException e) {
+				System.err.println("[Window] Could not read image from '" + path + "'.");
+			}
+		}
+		window.setIconImages(icons);
 	}
-	
+
 	public static void setMouseCursor() {
 		setMouseCursor(Cursor.DEFAULT_CURSOR); 
 	}

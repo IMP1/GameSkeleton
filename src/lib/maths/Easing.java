@@ -1,4 +1,4 @@
-package lib;
+package lib.maths;
 
 public class Easing {
 
@@ -90,6 +90,10 @@ public class Easing {
 			outcome *= (n + 1 - i) / i;
 		}
 		return outcome;
+	}
+	
+	public static double binarySin(double x) {
+		return (Math.sin(x - Math.PI/2) + 1) / 2;
 	}
 	
 }

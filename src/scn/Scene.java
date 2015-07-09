@@ -11,32 +11,33 @@ public abstract class Scene implements jog.Event.EventHandler {
 	abstract public void close();
 	
 	@Override
-	abstract public void keyPressed(int key);
+	public void keyPressed(int key) {}
 	
 	@Override
-	abstract public void keyReleased(int key);
+	public void keyReleased(int key) {}
 	
 	@Override
-	abstract public void mousePressed(int mouseX, int mouseY, int mouseKey);
+	public void mousePressed(int mouseX, int mouseY, int mouseKey) {}
 	
 	@Override
-	abstract public void mouseReleased(int mouseX, int mouseY, int mouseKey);
+	public void mouseReleased(int mouseX, int mouseY, int mouseKey) {}
 
 	@Override
-	abstract public void mouseScrolled(int x, int y, int scroll);
+	public void mouseScrolled(int x, int y, int scroll) {}
 
 	@Override
-	abstract public void focus(boolean gained);
+	public void focus(boolean gained) {}
 
 	@Override
-	abstract public void mouseFocus(boolean gained);
+	public void mouseFocus(boolean gained) {}
 
 	@Override
-	abstract public void resize(int oldWidth, int oldHeight);
+	public void resize(int oldWidth, int oldHeight) {}
 
 	@Override
-	abstract public void mouseMoved(int x, int y);
+	public void mouseMoved(int x, int y) {} 
 
 	@Override
-	abstract public boolean quit();
+	public boolean quit() { return false; }
+		
 }

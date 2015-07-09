@@ -1,5 +1,7 @@
 package scn;
 
+import java.util.EmptyStackException;
+
 public class SceneManager {
 	
 	private SceneManager() {}
@@ -16,6 +18,7 @@ public class SceneManager {
 	}
 	
 	public static void setScene(Scene newScene) {
+		closeScene();
 		currentScene = newScene;
 		currentScene.start();
 	}
@@ -27,7 +30,18 @@ public class SceneManager {
 	}
 	
 	public static void returnScene() {
-		currentScene = sceneStack.pop();
+		closeScene();
+		try {
+			currentScene = sceneStack.pop();
+		} catch (EmptyStackException e) {
+			currentScene = null;
+		}
+	}
+	
+	private static void closeScene() {
+		if (currentScene != null) {
+			currentScene.close();
+		}
 	}
 
 }

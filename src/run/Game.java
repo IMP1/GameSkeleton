@@ -1,41 +1,47 @@
 package run;
 
+import java.awt.event.KeyEvent;
+
+import jog.Input;
 import jog.Window.WindowMode;
 import scn.*;
 
 public abstract class Game implements jog.Event.EventHandler {
 	
-	private static final String defaultTitle = "Jog Game";
-	private static final int defaultWidth = 800;
-	private static final int defaultHeight = 600;
-	private static final int defualtMinimumFPS = 10;
-	private static final WindowMode defaultWindowMode = WindowMode.WINDOWED;
+	private static final String DEFAULT_TITLE = "Jog Game";
+	private static final int DEFAULT_WIDTH = 800;
+	private static final int DEFAULT_HEIGHT = 600;
+	private static final int DEFAULT_MINIMUM_FPS = 10;
+	private static final WindowMode DEFAULT_WINDOW_MODE = WindowMode.WINDOWED;
 	
 	public Game(Scene startingScene) {
-		this(startingScene, defaultTitle);
+		this(startingScene, DEFAULT_TITLE);
 	}
 	public Game(Scene startingScene, String title) {
-		this(startingScene, title, defaultWidth, defaultHeight);
+		this(startingScene, title, DEFAULT_WIDTH, DEFAULT_HEIGHT);
 	}
 	public Game(Scene startingScene, String title, int width, int height) {
-		this(startingScene, title, width, height, defualtMinimumFPS);
+		this(startingScene, title, width, height, DEFAULT_MINIMUM_FPS);
 	}
 	public Game(Scene startingScene, String title, int width, int height, int minimumFPS) {
-		this(startingScene, title, width, height, minimumFPS, defaultWindowMode);
+		this(startingScene, title, width, height, minimumFPS, DEFAULT_WINDOW_MODE);
 	}
 	public Game(Scene startingScene, String title, int width, int height, int minimumFPS, jog.Window.WindowMode windowMode) {
 		double maxDT = 1.0 / minimumFPS;
-		load(width, height, title, startingScene, windowMode);
+		load(width, height, title, windowMode);
+		setup(startingScene);
 		gameLoop(maxDT);
 		close();
-		System.exit(0);
 	}
 	
-	protected void load(int width, int height, String title, Scene startingScene, jog.Window.WindowMode windowMode) {
+	protected void load(int width, int height, String title, jog.Window.WindowMode windowMode) {
 		jog.Window.initialise(width, height, title, windowMode);
 		jog.Input.initialise();
 		jog.Event.setHandler(this);
 		jog.Graphics.initialise();
+	}
+	
+	protected void setup(Scene startingScene) {
 		SceneManager.setScene(startingScene);
 	}
 	
@@ -43,10 +49,9 @@ public abstract class Game implements jog.Event.EventHandler {
 		long lastTick = System.nanoTime();
 		while (jog.Window.isOpen()) {
 			try { Thread.sleep(1); } catch (Exception e) {}; // pause a bit so that we don't choke the system
-			jog.Event.pump();
-			
 			double deltaTime = (double)(System.nanoTime() - lastTick) / 1_000_000_000.0;
 			lastTick = System.nanoTime();
+			
 			// Update multiple times rather than with a dangerously large delta-time
 			while (deltaTime > maxDT) {
 				update(maxDT);
@@ -55,13 +60,26 @@ public abstract class Game implements jog.Event.EventHandler {
 			if (deltaTime > 0)
 				update(deltaTime);
 			
+			updateInput();
+			// If we've just quit as a result of an event
+			if (!jog.Window.isOpen()) break;
+			
 			jog.Graphics.clear();
 			draw();
 		}
 	}
 	
+	protected void updateInput() {
+		jog.Event.pump();
+	}
+	
 	protected void close() {
-		System.out.println("Successfully closed.");
+		while (SceneManager.scene() != null) {
+			SceneManager.returnScene();
+		}
+		System.out.println("[Game] Closed successfully.");
+		jog.Window.close();
+		System.exit(0);
 	}
 	
 	protected void update(double dt) {
@@ -94,6 +112,9 @@ public abstract class Game implements jog.Event.EventHandler {
 	@Override
 	public void keyPressed(int key) {
 		SceneManager.scene().keyPressed(key);
+		if (key == KeyEvent.VK_F4 && Input.isKeyDown(KeyEvent.VK_ALT)) {
+			close();
+		}
 	}
 
 	@Override
@@ -124,8 +145,6 @@ public abstract class Game implements jog.Event.EventHandler {
 	@Override
 	public boolean quit() {
 		return SceneManager.scene().quit();
-	}
-	
-	
+	}	
 
 }
