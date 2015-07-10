@@ -2,7 +2,7 @@ package jog;
 
 import java.util.ArrayList;
 
-public class Event {
+public abstract class Event {
 	
 	private static Object monitor = new Object();
 	protected static ArrayList<BaseEvent> eventBuffer = new ArrayList<BaseEvent>();
