@@ -3,10 +3,13 @@ package run;
 import java.awt.event.KeyEvent;
 
 import jog.Input;
+import jog.Event.KeyboardEventHandler;
+import jog.Event.MouseEventHandler;
+import jog.Event.WindowEventHandler;
 import jog.Window.WindowMode;
 import scn.*;
 
-public abstract class Game implements jog.Event.EventHandler {
+public abstract class Game implements KeyboardEventHandler, MouseEventHandler, WindowEventHandler {
 	
 	private static final String DEFAULT_TITLE = "Jog Game";
 	private static final int DEFAULT_WIDTH = 800;
@@ -37,7 +40,9 @@ public abstract class Game implements jog.Event.EventHandler {
 	protected void load(int width, int height, String title, jog.Window.WindowMode windowMode) {
 		jog.Window.initialise(width, height, title, windowMode);
 		jog.Input.initialise();
-		jog.Event.setHandler(this);
+		jog.Event.addWindowHandler(this);
+		jog.Event.addKeyboardHandler(this);		
+		jog.Event.addMouseHandler(this);
 		jog.Graphics.initialise();
 	}
 	

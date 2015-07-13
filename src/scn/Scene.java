@@ -1,6 +1,8 @@
 package scn;
 
-public abstract class Scene implements jog.Event.EventHandler {
+import jog.Event.*;
+
+public abstract class Scene implements KeyboardEventHandler, MouseEventHandler, WindowEventHandler {
 	
 	abstract public void start();
 	
