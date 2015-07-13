@@ -87,5 +87,30 @@ public class Camera {
 	public void setBounds(int minX, int minY, int maxX, int maxY) {
 		bounds = new Rectangle(minX, minY, maxX - minX, maxY - minY);
 	}
+	
+	public double getMouseWorldX() {
+		return getWorldX(jog.Input.getMouseX());
+	}
+	
+	public double getMouseWorldY() {
+		return getWorldY(jog.Input.getMouseY());
+	}
+	
+	public double getScreenX(double worldX) {
+		// TODO: these need to include scale
+		return worldX - x;
+	}
+	
+	public double getScreenY(double worldY) {
+		return worldY - y;
+	}
+	
+	public double getWorldX(double screenX) {
+		return screenX + x;
+	}
+	
+	public double getWorldY(double screenY) {
+		return screenY + y;
+	}
 
 }
