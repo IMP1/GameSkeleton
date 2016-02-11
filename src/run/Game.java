@@ -84,7 +84,8 @@ public abstract class Game implements KeyboardEventHandler, MouseEventHandler, W
 		while (SceneManager.scene() != null) {
 			SceneManager.returnScene();
 		}
-		System.out.println("[Game] Closed successfully.");
+		if (Game.LOGGING)
+			System.out.println("[Game] Closed successfully.");
 		jog.Window.close();
 		System.exit(0);
 	}
