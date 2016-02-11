@@ -52,7 +52,7 @@ public class Sprite {
 	}
 	
 	public void draw(double x, double y) {
-		jog.Graphics.drawq(image, quads[currentPose][currentFrame], x, y);
+		jog.Graphics.draw(image, quads[currentPose][currentFrame], x, y);
 	}
 	
 	private double currentFrameDuration() {
