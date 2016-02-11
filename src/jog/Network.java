@@ -196,7 +196,7 @@ public abstract class Network {
 			while (!closed) {
 				try {
 					Socket client = socket.accept();
-					String name = client.getInetAddress().getHostAddress();
+					String name = String.format("Client %d (%s)", clientWriters.size() + 1, client.getInetAddress().getHostAddress());
 					BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(client.getOutputStream()));
 					ClientListener listener = new ClientListener(name, client);
 					listener.start();
