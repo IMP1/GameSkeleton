@@ -2,15 +2,36 @@ package jog;
 
 import java.util.ArrayList;
 
-public class Event {
+public abstract class Event {
 	
-	private static Object monitor = new Object();
+	private static Object eventMonitor = new Object();
+	private static Object listenerMonitor = new Object();
 	protected static ArrayList<BaseEvent> eventBuffer = new ArrayList<BaseEvent>();
 	private static BaseEvent[] queue = new BaseEvent[0];
-	private static EventHandler handler = null;
 	
-	public static void setHandler(EventHandler newHandler) {
-		handler = newHandler;
+	private static ArrayList<KeyboardEventHandler> keyboardHandlers = new ArrayList<KeyboardEventHandler>();
+	private static ArrayList<MouseEventHandler> mouseHandlers = new ArrayList<MouseEventHandler>();
+	private static ArrayList<WindowEventHandler> windowHandlers = new ArrayList<WindowEventHandler>();
+	
+	public static void addKeyboardHandler(KeyboardEventHandler newHandler) {
+		System.out.println("Adding a keyboard handler.");
+		synchronized (listenerMonitor) {
+			keyboardHandlers.add(newHandler);
+		}
+	}
+	
+	public static void addMouseHandler(MouseEventHandler newHandler) {
+		System.out.println("Adding a mouse handler.");
+		synchronized (listenerMonitor) {
+			mouseHandlers.add(newHandler);
+		}
+	}
+	
+	public static void addWindowHandler(WindowEventHandler newHandler) {
+		System.out.println("Adding a window handler.");
+		synchronized (listenerMonitor) {
+			windowHandlers.add(newHandler);
+		}
 	}
 	
 	public enum EventType {
@@ -37,67 +58,97 @@ public class Event {
 		}
 	}
 	
-	public interface EventHandler {
-		public void focus(boolean gained);
-		public void mouseFocus(boolean gained);
-		public void resize(int oldWidth, int oldHeight);
+	public interface KeyboardEventHandler {
 		public void keyPressed(int key);
 		public void keyReleased(int key);
+	}
+	
+	public interface MouseEventHandler {
 		public void mouseMoved(int x, int y);
 		public void mouseScrolled(int x, int y, int scroll);
 		public void mousePressed(int x, int y, int key);
 		public void mouseReleased(int x, int y, int key);
+	}
+	
+	public interface WindowEventHandler {
+		public void focus(boolean gained);
+		public void mouseFocus(boolean gained);
+		public void resize(int oldWidth, int oldHeight);
 		public boolean quit();
 	}
 	
 	public static void push(EventType type, Object... params) {
-		synchronized (monitor) {
+		synchronized (eventMonitor) {
 			eventBuffer.add(new BaseEvent(type, params));
 		}
 	}
 	
 	public static void pump() {
-		synchronized (monitor) {
-			queue = eventBuffer.toArray(new BaseEvent[0]);
+		synchronized (eventMonitor) {
+			queue = eventBuffer.toArray(new BaseEvent[eventBuffer.size()]);
 			eventBuffer.clear();
 		}
-		for (int i = 0; i < queue.length; i ++) {
-			poll(queue[i]);
+		synchronized (listenerMonitor) {
+			for (int i = 0; i < queue.length; i ++) {
+				poll(queue[i]);
+			}
 		}
 	}
 	
-	public static void poll(BaseEvent e) {
-		if (handler == null) {
+	private static void poll(BaseEvent e) {
+		if (windowHandlers.isEmpty()) {
 			if (e.type == EventType.QUIT) Window.close();
 			return;
 		}
+		ArrayList<KeyboardEventHandler> keyboardHandlers = new ArrayList<KeyboardEventHandler>(Event.keyboardHandlers);
+		ArrayList<WindowEventHandler> windowHandlers = new ArrayList<WindowEventHandler>(Event.windowHandlers);
+		ArrayList<MouseEventHandler> mouseHandlers = new ArrayList<MouseEventHandler>(Event.mouseHandlers);
 		switch(e.type) {
 			case FOCUS:
-				handler.focus((boolean)e.params[0]);
+				for (WindowEventHandler h : windowHandlers) {
+					h.focus((boolean)e.params[0]);
+				}
 				break;
 			case MOUSE_FOCUS:
-				handler.mouseFocus((boolean)e.params[0]);
+				for (WindowEventHandler h : windowHandlers) {
+					h.mouseFocus((boolean)e.params[0]);
+				}
 				break;
 			case MOUSE_MOVED:
-				handler.mouseMoved((int)e.params[0], (int)e.params[1]);
+				for (MouseEventHandler h : mouseHandlers) {
+					h.mouseMoved((int)e.params[0], (int)e.params[1]);
+				}
 				break;
 			case MOUSE_SCROLLED:
-				handler.mouseScrolled((int)e.params[0], (int)e.params[1], (int)e.params[2]);
+				for (MouseEventHandler h : mouseHandlers) {
+					h.mouseScrolled((int)e.params[0], (int)e.params[1], (int)e.params[2]);
+				}
 				break;
 			case MOUSE_PRESSED:
-				handler.mousePressed((int)e.params[0], (int)e.params[1], (int)e.params[2]);
+				for (MouseEventHandler h : mouseHandlers) {
+					h.mousePressed((int)e.params[0], (int)e.params[1], (int)e.params[2]);
+				}
 				break;
 			case MOUSE_RELEASED:
-				handler.mouseReleased((int)e.params[0], (int)e.params[1], (int)e.params[2]);
+				for (MouseEventHandler h : mouseHandlers) {
+					h.mouseReleased((int)e.params[0], (int)e.params[1], (int)e.params[2]);
+				}
 				break;
 			case KEY_PRESSED:
-				handler.keyPressed((int)e.params[0]);
+				for (KeyboardEventHandler h : keyboardHandlers) {
+					h.keyPressed((int)e.params[0]);
+				}
 				break;
 			case KEY_RELASED:
-				handler.keyReleased((int)e.params[0]);
+				for (KeyboardEventHandler h : keyboardHandlers) {
+					h.keyReleased((int)e.params[0]);
+				}
 				break;
 			case QUIT:
-				boolean abortQuitting = handler.quit();
+				boolean abortQuitting = false;
+				for (WindowEventHandler h : windowHandlers) {
+					abortQuitting = abortQuitting || h.quit();
+				}
 				if (!abortQuitting) {
 					Window.close();
 				}

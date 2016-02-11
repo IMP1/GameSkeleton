@@ -9,7 +9,18 @@ import net.java.games.input.ControllerEnvironment;
 
 public class Gamepad extends Thread {
 	
-	public static final double DEAD_ZONE = 0.5;
+	private static final double DEAD_ZONE = 0.5;
+	
+	public static final int A = 0;
+	public static final int B = 1;
+	public static final int X = 2;
+	public static final int Y = 3;
+	public static final int LB = 4;
+	public static final int RB = 5;
+	public static final int SELECT = 6;
+	public static final int START = 7;
+	public static final int LS = 8;
+	public static final int RS = 9;
 	
 	private static ArrayList<Controller> claimedControllers = new ArrayList<Controller>();
 	protected static void reset() {

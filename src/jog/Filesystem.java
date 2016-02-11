@@ -2,6 +2,8 @@ package jog;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -91,7 +93,22 @@ public abstract class Filesystem {
 		try {
 			return f.toURI().toURL();
 		} catch (MalformedURLException e) {
-			throw new RuntimeException("Path exists to, but no URL can be created for \"" + filename + "\".");
+			throw new RuntimeException("Path exists to, but no URL can be created for \"" + filename + "\".", e);
+		}
+	}
+	
+	/**
+	 * Gets a FileInputStream for the file, if it exists within the project.
+	 * @param filename the name of the file.
+	 * @return the input stream for the file.
+	 * @see FileInputStream
+	 */
+	public static FileInputStream getInputStream(String filename) {
+		File f = getFile(filename);
+		try {
+			return new FileInputStream(f);
+		} catch (FileNotFoundException e) {
+			throw new RuntimeException("Path exists to, but no URL can be created for \"" + filename + "\".", e);
 		}
 	}
 	
