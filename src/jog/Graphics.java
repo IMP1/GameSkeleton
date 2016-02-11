@@ -4,11 +4,15 @@ import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.Graphics2D;
+import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.Stack;
 
 public abstract class Graphics {
@@ -203,12 +207,30 @@ public abstract class Graphics {
 		currentCanvas.setFont(getFont().deriveFont((float)fontSize));
 	}
 	
+	public static void setFont(Font font, double fontSize) {
+		currentCanvas.setFont(font.deriveFont((float)fontSize));
+	}
+	
 	public static void setFont() {
 		currentCanvas.setFont(defaultFont);
 	}
 	
 	public static Font getFont() {
 		return currentCanvas.getFont();
+	}
+	
+	public static Font newFont(String filename) {
+		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		try {
+			Font font = Font.createFont(Font.TRUETYPE_FONT, new File(jog.Filesystem.getPath(filename)));
+			ge.registerFont(font);
+			return font;
+		} catch (FontFormatException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	public static int getFontWidth(String text) {
