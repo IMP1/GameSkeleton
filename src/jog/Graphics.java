@@ -100,14 +100,15 @@ public abstract class Graphics {
 		setColour(255, 255, 255, 255);
 	}
 	
-	private static void setAlpha() {
+	private static void setImageColour() {
+		// TODO: add tint
 		previousComposite = currentCanvas.getComposite();
 		float alpha = (float)currentCanvas.getColor().getAlpha() / 255;
 		Composite comp = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha);
 		currentCanvas.setComposite(comp);
 	}
 	
-	private static void resetAlpha() {
+	private static void resetImageColour() {
 		if (previousComposite != null) {
 			currentCanvas.setComposite(previousComposite);
 			previousComposite = null;
@@ -123,23 +124,23 @@ public abstract class Graphics {
 	}
 	
 	public static void draw(Drawable img, double x, double y) {
-		setAlpha();
+		setImageColour();
 		img.draw(currentCanvas, x, y);
-		resetAlpha();
+		resetImageColour();
 	}
 	
-	public static void drawq(Drawable img, Rectangle quad, double x, double y, double scale) {
+	public static void draw(Drawable img, Rectangle quad, double x, double y, double scale) {
 		push();
 		translate(x, y);
 		scale(scale);
-		drawq(img, quad, 0, 0);
+		draw(img, quad, 0, 0);
 		pop();
 	}
 
-	public static void drawq(Drawable img, Rectangle quad, double x, double y) {
-		setAlpha();
+	public static void draw(Drawable img, Rectangle quad, double x, double y) {
+		setImageColour();
 		img.drawq(currentCanvas, quad, x, y);
-		resetAlpha();
+		resetImageColour();
 	}
 	
 	public static Color inverse(Color c) {
