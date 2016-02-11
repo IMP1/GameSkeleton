@@ -66,6 +66,14 @@ public abstract class Window {
 		window.setLocation(x, y);
 	}
 	
+	public static boolean isResizable() {
+		return window.isResizable();
+	}
+	
+	public static void setResizable(boolean resizable) {
+		window.setResizable(resizable);
+	}
+	
 	protected static int getMouseX() { 
 		try {
 			return window.getMousePosition().x - window.getInsets().left;
