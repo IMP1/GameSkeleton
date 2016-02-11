@@ -80,7 +80,11 @@ public class Rational extends Number implements Comparable<Rational> {
 	}
 	
 	public int signum() {
-		return Long.signum(numerator);
+		return Long.signum(numerator) * Long.signum(denominator);
+	}
+	
+	public boolean isZero() {
+		return (numerator == 0);
 	}
 	
 	public Rational negate() {
@@ -119,7 +123,7 @@ public class Rational extends Number implements Comparable<Rational> {
 		} else if (exponent == 1) {
 			return this;
 		} else if (exponent < 0) {
-			return new Rational((long)Math.pow(numerator, -exponent), (long)Math.pow(denominator, -exponent)).reciprocal();
+			return pow(-exponent).reciprocal();
 		} else {
 			return new Rational((long)Math.pow(numerator, exponent), (long)Math.pow(denominator, exponent));
 		}
