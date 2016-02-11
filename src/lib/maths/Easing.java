@@ -1,6 +1,7 @@
 package lib.maths;
 
 public class Easing {
+	private Easing() {}
 
 	// Linear
 	public static double linear(double timer, double distance, double duration) {
