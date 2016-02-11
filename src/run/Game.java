@@ -11,6 +11,8 @@ import scn.*;
 
 public abstract class Game implements KeyboardEventHandler, MouseEventHandler, WindowEventHandler {
 	
+	public static boolean LOGGING = true;
+	
 	private static final String DEFAULT_TITLE = "Jog Game";
 	private static final int DEFAULT_WIDTH = 800;
 	private static final int DEFAULT_HEIGHT = 600;

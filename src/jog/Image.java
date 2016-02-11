@@ -5,6 +5,8 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import run.Game;
+
 public class Image extends Graphics.Drawable {
 
 	private static BufferedImage readImage(String path) {
@@ -17,7 +19,8 @@ public class Image extends Graphics.Drawable {
 	
 	public Image(String path) {
 		super(readImage(path));
-		System.out.println("[Image] " + path + " loaded.");
+		if (Game.LOGGING)
+			System.out.println("[Image] " + path + " loaded.");
 	}
 	
 	private Image(BufferedImage img) {

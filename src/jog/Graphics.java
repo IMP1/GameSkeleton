@@ -15,6 +15,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Stack;
 
+import run.Game;
+
 public abstract class Graphics {
 
 	private static BufferStrategy strategy;
@@ -88,6 +90,8 @@ public abstract class Graphics {
 		previousComposite = null;
 		currentCanvas = screen;
 		setBackgroundColour(Color.BLACK);
+		if (Game.LOGGING)
+			System.out.println("[Graphics] Initialised.");
 	}
 	
 	public static void clear() {

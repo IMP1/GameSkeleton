@@ -2,6 +2,8 @@ package jog;
 
 import java.util.ArrayList;
 
+import run.Game;
+
 public abstract class Event {
 	
 	private static Object eventMonitor = new Object();
@@ -14,21 +16,24 @@ public abstract class Event {
 	private static ArrayList<WindowEventHandler> windowHandlers = new ArrayList<WindowEventHandler>();
 	
 	public static void addKeyboardHandler(KeyboardEventHandler newHandler) {
-		System.out.println("Adding a keyboard handler.");
+		if (Game.LOGGING)
+			System.out.println("Adding a keyboard handler.");
 		synchronized (listenerMonitor) {
 			keyboardHandlers.add(newHandler);
 		}
 	}
 	
 	public static void addMouseHandler(MouseEventHandler newHandler) {
-		System.out.println("Adding a mouse handler.");
+		if (Game.LOGGING)
+			System.out.println("Adding a mouse handler.");
 		synchronized (listenerMonitor) {
 			mouseHandlers.add(newHandler);
 		}
 	}
 	
 	public static void addWindowHandler(WindowEventHandler newHandler) {
-		System.out.println("Adding a window handler.");
+		if (Game.LOGGING)
+			System.out.println("Adding a window handler.");
 		synchronized (listenerMonitor) {
 			windowHandlers.add(newHandler);
 		}

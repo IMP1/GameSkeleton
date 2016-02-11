@@ -10,6 +10,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
+import run.Game;
+
 /**
  * <h1>jog.filesystem</h1>
  * <p>Used for accessing files within the project.</p>
@@ -48,8 +50,8 @@ public abstract class Filesystem {
 		}
 		// Add location
 		locations.add(path);
-		System.out.println("[Filesystem] \"" + path + "\" added to project locations.");
-		// ~~~~~~
+		if (Game.LOGGING)
+			System.out.println("[Filesystem] \"" + path + "\" added to project locations.");
 		// If we don't want to look any further
 		if (!subFolders || !newLocation.isDirectory()) {			
 			return;

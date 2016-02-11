@@ -5,6 +5,8 @@ import java.io.IOException;
 
 import org.newdawn.easyogg.OggClip;
 
+import run.Game;
+
 public abstract class Audio {
 
 	public static class Source {
@@ -20,6 +22,8 @@ public abstract class Audio {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			if (Game.LOGGING)
+				System.out.println("[Audio] " + filename + " loaded.");
 			isStopped = true;
 			isPaused = false;
 		}

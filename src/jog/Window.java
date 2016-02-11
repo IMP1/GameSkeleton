@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
+import run.Game;
+
 public abstract class Window {
 	
 	public enum WindowMode {
@@ -95,7 +97,8 @@ public abstract class Window {
 	}
 	
 	public static void close() {
-		System.out.println("[Window] Closed.");
+		if (Game.LOGGING)
+			System.out.println("[Window] Closed.");
 		dispose();
 		open = false;
 	}
@@ -165,6 +168,8 @@ public abstract class Window {
 		
 		canvas.createBufferStrategy(2);
 		Window.open = true;
+		if (Game.LOGGING)
+			System.out.println("[Window] Created.");
 	}
 	
 	protected static void setKeyboardListener(KeyListener listener) {

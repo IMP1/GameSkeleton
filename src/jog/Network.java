@@ -5,6 +5,8 @@ import java.net.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import run.Game;
+
 public abstract class Network {
 	
 	private final static String HANDSHAKE_CONNECT = "!o/#";
@@ -94,7 +96,8 @@ public abstract class Network {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			System.out.println("[Network] (Client) Closed client.");
+			if (Game.LOGGING)
+				System.out.println("[Network] (Client) Closed client.");
 		}
 		
 	}
@@ -132,7 +135,6 @@ public abstract class Network {
 							}
 						}
 					} catch (IOException e) {
-//						e.printStackTrace();
 						isClosed = true;
 					}
 				}
@@ -202,7 +204,8 @@ public abstract class Network {
 					listener.start();
 					clientReaders.add(listener);
 					clientWriters.put(name, writer);
-					System.out.println("[Network] (Server) connected to \"" + name + "\".");
+					if (Game.LOGGING)
+						System.out.println("[Network] (Server) connected to \"" + name + "\".");
 					handler.onConnect(name);
 					send(name, HANDSHAKE_CONNECT);
 				} catch (SocketException e) {
@@ -225,7 +228,8 @@ public abstract class Network {
 		}
 		
 		public void send(String address, String message) {
-			System.out.println("[Network] (Server) Sending message \"" + message + "\" to " + address + ".");
+			if (Game.LOGGING)
+				System.out.println("[Network] (Server) Sending message \"" + message + "\" to " + address + ".");
 			if (!clientWriters.containsKey(address)) {
 				System.err.println("[Network] (Server) There is no client \"" + address + "\".");
 				return;
@@ -260,7 +264,8 @@ public abstract class Network {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			System.out.println("[Network] (Server) Closed server.");
+			if (Game.LOGGING)
+				System.out.println("[Network] (Server) Closed server.");
 		}
 		
 		private void removeClient(String address) {
@@ -269,18 +274,24 @@ public abstract class Network {
 				return;
 			}
 			try {
-				System.out.print("[Network] (Server) Sending disconnect handshake... ");
+				if (Game.LOGGING)
+					System.out.print("[Network] (Server) Sending disconnect handshake... ");
 				clientWriters.get(address).write(HANDSHAKE_DISCONNECT + "\r\n");
-				System.out.println("Success!");
+				if (Game.LOGGING)
+					System.out.println("Success!");
 			} catch (IOException e) {
-				System.err.println("Failure!");
+				if (Game.LOGGING)
+					System.err.println("Failure!");
 			}
 			try {
-				System.out.print("[Network] (Server) Attempting to close bufferedWriter... ");
+				if (Game.LOGGING)
+					System.out.print("[Network] (Server) Attempting to close bufferedWriter... ");
 				clientWriters.get(address).close();
-				System.out.println("Success!");
+				if (Game.LOGGING)
+					System.out.println("Success!");
 			} catch (IOException e) {
-				System.err.println("Failure!");
+				if (Game.LOGGING)
+					System.err.println("Failure!");
 			}
 			ClientListener client = null;
 			for (ClientListener c : clientReaders) {
@@ -289,17 +300,21 @@ public abstract class Network {
 				}
 			}
 			try {
-				System.out.print("[Network] (Server) Attempting to close bufferedReader and socket... ");
+				if (Game.LOGGING)
+					System.out.print("[Network] (Server) Attempting to close bufferedReader and socket... ");
 				client.in.close();
 				client.socket.close();
-				System.out.println("Success!");
+				if (Game.LOGGING)
+					System.out.println("Success!");
 			} catch (IOException e) {
-				System.err.println("Failure!");
+				if (Game.LOGGING)
+					System.err.println("Failure!");
 			}
 			clientWriters.remove(address);
 			clientReaders.remove(client);
 			handler.onDisconnect(address);
-			System.out.println("[Network] (Server) Client removed.");
+			if (Game.LOGGING)
+				System.out.println("[Network] (Server) Client removed.");
 		}
 		
 	}
