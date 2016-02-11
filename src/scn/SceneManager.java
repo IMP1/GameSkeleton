@@ -20,13 +20,15 @@ public class SceneManager {
 	public static void setScene(Scene newScene) {
 		closeScene();
 		currentScene = newScene;
-		currentScene.start();
+		if (currentScene != null)
+			currentScene.start();
 	}
 
 	public static void addScene(Scene newScene) {
 		sceneStack.push(currentScene);
 		currentScene = newScene;
-		currentScene.start();
+		if (currentScene != null)
+			currentScene.start();
 	}
 	
 	public static void returnScene() {
@@ -39,9 +41,8 @@ public class SceneManager {
 	}
 	
 	private static void closeScene() {
-		if (currentScene != null) {
+		if (currentScene != null)
 			currentScene.close();
-		}
 	}
 
 }

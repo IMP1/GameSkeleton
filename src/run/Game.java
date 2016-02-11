@@ -83,11 +83,13 @@ public abstract class Game implements jog.Event.EventHandler {
 	}
 	
 	protected void update(double dt) {
-		SceneManager.scene().update(dt);
+		if (SceneManager.scene() != null)
+			SceneManager.scene().update(dt);
 	}
 	
 	protected void draw() {
-		SceneManager.scene().draw();
+		if (SceneManager.scene() != null)
+			SceneManager.scene().draw();
 	}
 	
 	/*
@@ -96,22 +98,26 @@ public abstract class Game implements jog.Event.EventHandler {
 
 	@Override
 	public void focus(boolean gained) {
-		SceneManager.scene().focus(gained);
+		if (SceneManager.scene() != null)
+			SceneManager.scene().focus(gained);
 	}
 
 	@Override
 	public void mouseFocus(boolean gained) {
-		SceneManager.scene().mouseFocus(gained);
+		if (SceneManager.scene() != null)
+			SceneManager.scene().mouseFocus(gained);
 	}
 
 	@Override
 	public void resize(int oldWidth, int oldHeight) {
-		SceneManager.scene().resize(oldWidth, oldHeight);
+		if (SceneManager.scene() != null)
+			SceneManager.scene().resize(oldWidth, oldHeight);
 	}
 
 	@Override
 	public void keyPressed(int key) {
-		SceneManager.scene().keyPressed(key);
+		if (SceneManager.scene() != null)
+			SceneManager.scene().keyPressed(key);
 		if (key == KeyEvent.VK_F4 && Input.isKeyDown(KeyEvent.VK_ALT)) {
 			close();
 		}
@@ -119,32 +125,40 @@ public abstract class Game implements jog.Event.EventHandler {
 
 	@Override
 	public void keyReleased(int key) {
-		SceneManager.scene().keyReleased(key);
+		if (SceneManager.scene() != null)
+			SceneManager.scene().keyReleased(key);
 	}
 
 	@Override
 	public void mouseMoved(int x, int y) {
-		SceneManager.scene().mouseMoved(x, y);
+		if (SceneManager.scene() != null)
+			SceneManager.scene().mouseMoved(x, y);
 	}
 
 	@Override
 	public void mouseScrolled(int x, int y, int scroll) {
-		SceneManager.scene().mouseScrolled(x, y, scroll);
+		if (SceneManager.scene() != null)
+			SceneManager.scene().mouseScrolled(x, y, scroll);
 	}
 
 	@Override
 	public void mousePressed(int x, int y, int key) {
-		SceneManager.scene().mousePressed(x, y, key);
+		if (SceneManager.scene() != null)
+			SceneManager.scene().mousePressed(x, y, key);
 	}
 
 	@Override
 	public void mouseReleased(int x, int y, int key) {
-		SceneManager.scene().mouseReleased(x, y, key);
+		if (SceneManager.scene() != null)
+			SceneManager.scene().mouseReleased(x, y, key);
 	}
 
 	@Override
 	public boolean quit() {
-		return SceneManager.scene().quit();
+		if (SceneManager.scene() != null)
+			return SceneManager.scene().quit();
+		else
+			return false;
 	}	
 
 }
