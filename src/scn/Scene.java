@@ -2,13 +2,13 @@ package scn;
 
 public abstract class Scene implements jog.Event.EventHandler {
 	
-	abstract public void start();
+	public void start() {}
 	
-	abstract public void update(double dt);
+	public void update(double dt) {}
 	
-	abstract public void draw();
+	public void draw() {}
 	
-	abstract public void close();
+	public void close() {}
 	
 	@Override
 	public void keyPressed(int key) {}
