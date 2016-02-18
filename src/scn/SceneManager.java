@@ -17,18 +17,22 @@ public class SceneManager {
 		return currentScene;
 	}
 	
-	public static void setScene(Scene newScene) {
+	public static void changeScene(Scene newScene) {
 		closeScene();
+		setScene(newScene);
+	}
+	
+	private static void setScene(Scene newScene) {
 		currentScene = newScene;
+		if (run.Game.LOGGING)
+			System.out.println("Changing scene to " + newScene);
 		if (currentScene != null)
 			currentScene.start();
 	}
 
 	public static void addScene(Scene newScene) {
 		sceneStack.push(currentScene);
-		currentScene = newScene;
-		if (currentScene != null)
-			currentScene.start();
+		setScene(newScene);
 	}
 	
 	public static void returnScene() {

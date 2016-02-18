@@ -49,7 +49,7 @@ public abstract class Game implements KeyboardEventHandler, MouseEventHandler, W
 	}
 	
 	protected void setup(Scene startingScene) {
-		SceneManager.setScene(startingScene);
+		SceneManager.changeScene(startingScene);
 	}
 	
 	protected void gameLoop(double maxDT) {
