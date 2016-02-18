@@ -28,7 +28,9 @@ public abstract class Graphics {
 	private static Color backgroundColour;
 	private static Font defaultFont;
 	private static Graphics2D currentCanvas;
-	
+	private static HorizontalAlign defaultHorizontalAlignment = HorizontalAlign.LEFT;
+	private static VerticalAlign defaultVerticalAlignment = VerticalAlign.TOP;
+
 	public enum HorizontalAlign {
 		LEFT,
 		RIGHT,
@@ -315,21 +317,21 @@ public abstract class Graphics {
 			currentCanvas.drawPolygon(xPoints, yPoints, xPoints.length);
 		}
 	}
-	
-	public static void print(String text, double x, double y) {
-		printText(text, x, y);
-	}
 
 	public static void printCentred(String text, double x, double y) {
-		print(text, x, y, 0, 0, HorizontalAlign.CENTRE, VerticalAlign.TOP);
+		print(text, x, y, 0, 0, HorizontalAlign.CENTRE, VerticalAlign.MIDDLE);
+	}
+	
+	public static void print(String text, double x, double y) {
+		print(text, x, y, 0, 0, defaultHorizontalAlignment, defaultVerticalAlignment);
 	}
 	
 	public static void print(String text, double x, double y, double w, double h, HorizontalAlign horizAlign) {
-		print(text, x, y, w, h, horizAlign, VerticalAlign.TOP);
+		print(text, x, y, w, h, horizAlign, defaultVerticalAlignment);
 	}
 	
 	public static void print(String text, double x, double y, double w, double h, VerticalAlign vertAlign) {
-		print(text, x, y, w, h, HorizontalAlign.LEFT, vertAlign);
+		print(text, x, y, w, h, defaultHorizontalAlignment, vertAlign);
 	}
 	
 	public static void print(String text, double x, double y, double w, double h, HorizontalAlign horizAlign, VerticalAlign vertAlign) {
