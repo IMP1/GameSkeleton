@@ -3,7 +3,6 @@ package scn;
 import java.util.EmptyStackException;
 
 public class SceneManager {
-	
 	private SceneManager() {}
 	
 	private static Scene currentScene = null;
@@ -20,28 +19,33 @@ public class SceneManager {
 	public static void changeScene(Scene newScene) {
 		closeScene();
 		setScene(newScene);
+		startScene();
 	}
 	
 	private static void setScene(Scene newScene) {
 		currentScene = newScene;
 		if (run.Game.LOGGING)
 			System.out.println("Changing scene to " + newScene);
-		if (currentScene != null)
-			currentScene.start();
 	}
 
 	public static void addScene(Scene newScene) {
 		sceneStack.push(currentScene);
 		setScene(newScene);
+		startScene();
 	}
 	
 	public static void returnScene() {
 		closeScene();
 		try {
-			currentScene = sceneStack.pop();
+			setScene(sceneStack.pop());
 		} catch (EmptyStackException e) {
-			currentScene = null;
+			setScene(null);
 		}
+	}
+
+	private static void startScene() {
+		if (currentScene != null)
+			currentScene.start();
 	}
 	
 	private static void closeScene() {
