@@ -25,6 +25,7 @@ public abstract class Graphics {
 	private static int height;
 	private static Composite previousComposite;
 	private static Stack<AffineTransform> transformations;
+	private static AffineTransform defaultTransform;
 	private static Color backgroundColour;
 	private static Font defaultFont;
 	private static Graphics2D currentCanvas;
@@ -88,9 +89,10 @@ public abstract class Graphics {
 		height = Window.canvas.getHeight();
 		screen = (Graphics2D)strategy.getDrawGraphics();
 		defaultFont = screen.getFont();
-		transformations = new Stack<AffineTransform>();
 		previousComposite = null;
 		currentCanvas = screen;
+		transformations = new Stack<AffineTransform>();
+		defaultTransform = currentCanvas.getTransform();
 		setBackgroundColour(Color.BLACK);
 		if (Game.LOGGING)
 			System.out.println("[Graphics] Initialised.");
@@ -326,6 +328,18 @@ public abstract class Graphics {
 		print(text, x, y, 0, 0, defaultHorizontalAlignment, defaultVerticalAlignment);
 	}
 	
+	public static void print(String text, double x, double y, HorizontalAlign horizAlign) {
+		print(text, x, y, horizAlign, defaultVerticalAlignment);
+	}
+	
+	public static void print(String text, double x, double y, VerticalAlign vertAlign) {
+		print(text, x, y, defaultHorizontalAlignment, vertAlign);
+	}
+	
+	public static void print(String text, double x, double y, HorizontalAlign horizAlign, VerticalAlign vertAlign) {
+		print(text, x, y, 0, 0, horizAlign, vertAlign);
+	}
+	
 	public static void print(String text, double x, double y, double w, double h, HorizontalAlign horizAlign) {
 		print(text, x, y, w, h, horizAlign, defaultVerticalAlignment);
 	}
@@ -389,6 +403,10 @@ public abstract class Graphics {
 	
 	public static void pop() {
 		currentCanvas.setTransform(transformations.pop());
+	}
+	
+	public static void origin() {
+		currentCanvas.setTransform(defaultTransform);
 	}
 
 }
