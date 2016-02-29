@@ -73,7 +73,7 @@ public class Easing {
 		if (timer > duration) return distance;
 		return -distance / 2 * (Math.cos(Math.PI * timer / duration) - 1);
 	}
-	
+
 	public static double bezierCurve(double timer, double distance, double duration, double... points) {
 		if (timer > duration) return distance;
 		double t = timer / duration;
@@ -91,10 +91,6 @@ public class Easing {
 			outcome *= (n + 1 - i) / i;
 		}
 		return outcome;
-	}
-	
-	public static double binarySin(double x) {
-		return (Math.sin(x - Math.PI/2) + 1) / 2;
 	}
 	
 }
