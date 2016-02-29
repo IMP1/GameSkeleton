@@ -3,6 +3,7 @@ package run;
 import java.awt.event.KeyEvent;
 
 import jog.Input;
+import jog.Timer;
 import jog.Event.KeyboardEventHandler;
 import jog.Event.MouseEventHandler;
 import jog.Event.WindowEventHandler;
@@ -32,14 +33,18 @@ public abstract class Game implements KeyboardEventHandler, MouseEventHandler, W
 		this(startingScene, title, width, height, minimumFPS, DEFAULT_WINDOW_MODE);
 	}
 	public Game(Scene startingScene, String title, int width, int height, int minimumFPS, jog.Window.WindowMode windowMode) {
+		this(startingScene, title, width, height, minimumFPS, DEFAULT_WINDOW_MODE, false);
+	}
+	public Game(Scene startingScene, String title, int width, int height, int minimumFPS, jog.Window.WindowMode windowMode, boolean fixedTimestep) {
 		double maxDT = 1.0 / minimumFPS;
-		load(width, height, title, windowMode);
-		setup(startingScene);
-		gameLoop(maxDT);
+		initialise(width, height, title, windowMode);
+		setup();
+		begin(startingScene);
+		gameLoop(fixedTimestep, maxDT);
 		close();
 	}
 	
-	protected void load(int width, int height, String title, jog.Window.WindowMode windowMode) {
+	protected void initialise(final int width, final int height, final String title, final jog.Window.WindowMode windowMode) {
 		jog.Window.initialise(width, height, title, windowMode);
 		jog.Input.initialise();
 		jog.Event.addWindowHandler(this);
@@ -48,32 +53,42 @@ public abstract class Game implements KeyboardEventHandler, MouseEventHandler, W
 		jog.Graphics.initialise();
 	}
 	
-	protected void setup(Scene startingScene) {
+	protected void setup() {}
+	
+	protected void begin(Scene startingScene) {
 		SceneManager.changeScene(startingScene);
 	}
 	
-	protected void gameLoop(double maxDT) {
-		long lastTick = System.nanoTime();
+	protected void gameLoop(final boolean fixedTimestep, final double maxDT) {
+		Timer.getDeltaTime();
 		while (jog.Window.isOpen()) {
-			try { Thread.sleep(1); } catch (Exception e) {}; // pause a bit so that we don't choke the system
-			double deltaTime = (double)(System.nanoTime() - lastTick) / 1_000_000_000.0;
-			lastTick = System.nanoTime();
-			
-			// Update multiple times rather than with a dangerously large delta-time
-			while (deltaTime > maxDT) {
-				update(maxDT);
-				deltaTime -= maxDT;
+			if (fixedTimestep) {
+				int steps = jog.Timer.getTimesteps();
+				if (steps < 1) sleep(); // pause a bit so that we don't choke the system
+				for (int i = 0; i < steps; i ++) {
+					update(Timer.getFixedTimestep());
+				}
+			} else {
+				// Update multiple times rather than with a dangerously large delta-time
+				double deltaTime = Timer.getDeltaTime();
+				if (deltaTime < maxDT) sleep(); // pause a bit so that we don't choke the system
+				while (deltaTime > maxDT) {
+					update(maxDT);
+					deltaTime -= maxDT;
+				}
+				if (deltaTime > 0) update(deltaTime);
 			}
-			if (deltaTime > 0)
-				update(deltaTime);
-			
 			updateInput();
-			// If we've just quit as a result of an event
+			// If we've just quit as a result of an event or update:
 			if (!jog.Window.isOpen()) break;
-			
+			// Clear & Draw
 			jog.Graphics.clear();
 			draw();
 		}
+	}
+	
+	private void sleep() {
+		try { Thread.sleep(10); } catch (Exception e) {};
 	}
 	
 	protected void updateInput() {
