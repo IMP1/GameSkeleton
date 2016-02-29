@@ -136,6 +136,12 @@ public abstract class Game implements KeyboardEventHandler, MouseEventHandler, W
 		if (SceneManager.scene() != null)
 			SceneManager.scene().resize(oldWidth, oldHeight);
 	}
+	
+	@Override
+	public void move(int dx, int dy) {
+		if (SceneManager.scene() != null)
+			SceneManager.scene().move(dx, dy);
+	}
 
 	@Override
 	public void keyPressed(int key) {

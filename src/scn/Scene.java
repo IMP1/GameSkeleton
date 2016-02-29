@@ -35,6 +35,9 @@ public abstract class Scene implements KeyboardEventHandler, MouseEventHandler, 
 
 	@Override
 	public void resize(int oldWidth, int oldHeight) {}
+	
+	@Override
+	public void move(int dx, int dy) {}
 
 	@Override
 	public void mouseMoved(int x, int y) {} 

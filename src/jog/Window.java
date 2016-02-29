@@ -11,9 +11,6 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowFocusListener;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -143,26 +140,6 @@ public abstract class Window {
 		window.setLocationRelativeTo(null);
 		
 		window.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		window.addWindowListener(new WindowAdapter() {
-			
-			public void windowClosing(WindowEvent e) {
-				jog.Event.push(Event.EventType.QUIT);
-			}
-			
-		});
-		window.addWindowFocusListener(new WindowFocusListener() {
-			
-			@Override
-			public void windowLostFocus(WindowEvent e) {
-				jog.Event.push(Event.EventType.FOCUS, false);
-			}
-			
-			@Override
-			public void windowGainedFocus(WindowEvent e) {
-				jog.Event.push(Event.EventType.FOCUS, true);
-			}
-			
-		});
 		
 		window.setVisible(true);
 		
@@ -190,6 +167,12 @@ public abstract class Window {
 	protected static void setMouseWheelListener(MouseWheelListener listener) {
 		window.addMouseWheelListener(listener);
 		canvas.addMouseWheelListener(listener);
+	}
+	
+	protected static void setWindowListener(WindowListener listener) {
+		window.addWindowListener(listener);
+		window.addWindowFocusListener(listener);
+		window.addComponentListener(listener);
 	}
 	
 	public static void setIcon(String... filepaths) {

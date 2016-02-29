@@ -4,14 +4,17 @@ public abstract class Input {
 	
 	private static KeyboardListener keyListener;
 	private static MouseListener mouseListener;
+	private static WindowListener windowListener;
 	
 	public static void initialise() {
 		keyListener = new KeyboardListener();
 		mouseListener = new MouseListener();
+		windowListener = new WindowListener();
 		Window.setKeyboardListener(keyListener);
 		Window.setMouseListener(mouseListener);
 		Window.setMouseMotionListener(mouseListener);
 		Window.setMouseWheelListener(mouseListener);
+		Window.setWindowListener(windowListener);
 	}
 
 	public static boolean isKeyDown(int key) {

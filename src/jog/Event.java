@@ -51,6 +51,8 @@ public abstract class Event {
 		MOUSE_FOCUS,
 		// Window
 		FOCUS,
+		RESIZE,
+		WINDOW_MOVED,
 		QUIT,
 	}
 	
@@ -79,6 +81,7 @@ public abstract class Event {
 		public void focus(boolean gained);
 		public void mouseFocus(boolean gained);
 		public void resize(int oldWidth, int oldHeight);
+		public void move(int dx, int dy);
 		public boolean quit();
 	}
 	
@@ -147,6 +150,16 @@ public abstract class Event {
 			case KEY_RELASED:
 				for (KeyboardEventHandler h : keyboardHandlers) {
 					h.keyReleased((int)e.params[0]);
+				}
+				break;
+			case RESIZE:
+				for (WindowEventHandler h : windowHandlers) {
+					h.resize((int)e.params[0], (int)e.params[1]);
+				}
+				break;
+			case WINDOW_MOVED:
+				for (WindowEventHandler h : windowHandlers) {
+					 h.move((int)e.params[0], (int)e.params[1]);
 				}
 				break;
 			case QUIT:
