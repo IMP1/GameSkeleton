@@ -24,8 +24,8 @@ public class SceneManager {
 	
 	private static void setScene(Scene newScene) {
 		currentScene = newScene;
-		if (run.Game.LOGGING)
-			System.out.println("Changing scene to " + newScene);
+		if (run.Game.LOGGING && newScene != null)
+			System.out.println("Changing to " + newScene.getClass().getSimpleName() + " scene.");
 	}
 
 	public static void addScene(Scene newScene) {
