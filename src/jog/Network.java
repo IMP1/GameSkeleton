@@ -127,7 +127,6 @@ public abstract class Network {
 			public void run() {
 				while (!isClosed) {
 					try {
-						if (isClosed) System.out.println("It's CLOSED! :O");
 						for (String line = in.readLine(); line != null; line = in.readLine()) {
 							handler.onMessage(name, line);
 							if (line.contains(HANDSHAKE_DISCONNECT)) {
@@ -149,7 +148,7 @@ public abstract class Network {
 		private ServerEventHandler handler;
 		private boolean closed;
 		private int port;
-		
+
 		private Server(int port, ServerEventHandler handler) {
 			super();
 			try {
