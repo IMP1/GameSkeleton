@@ -70,6 +70,7 @@ public abstract class Button {
 	}
 	
 	public void act() {
+		if (disabled) return;
 		for (ButtonListener listener : listeners) {
 			listener.onPressed();
 		}
