@@ -17,8 +17,10 @@ public abstract class Input {
 		Window.setWindowListener(windowListener);
 	}
 
-	public static boolean isKeyDown(int key) {
-		return keyListener.isKeyDown(key);
+	public static boolean isKeyDown(int... key) {
+		for (int k : key)
+			if (keyListener.isKeyDown(k)) return true;
+		return false;
 	}
 	
 	public static boolean isMouseDown(int key) {
