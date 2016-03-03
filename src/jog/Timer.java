@@ -2,7 +2,7 @@ package jog;
 
 public abstract class Timer {
 	
-	private static double lastTime = System.nanoTime();;
+	private static double lastTime = System.nanoTime();
 	private static double fixedTimestepTimer = 0;
 	private static double fixedTimestep = 1.0 / 60.0;
 	
@@ -10,9 +10,13 @@ public abstract class Timer {
 		return fixedTimestep;
 	}
 	
+	public static double getSystemTime() {
+		return (double)(System.nanoTime()) / 1_000_000_000;
+	}
+	
 	public static double getDeltaTime() {
-		double deltaTime = (double)(System.nanoTime() - lastTime) / 1_000_000_000.0;
-		lastTime = System.nanoTime();
+		double deltaTime = getSystemTime() - lastTime;
+		lastTime = getSystemTime();
 		return deltaTime;
 	}
 	
