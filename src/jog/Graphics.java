@@ -24,10 +24,12 @@ public abstract class Graphics {
 	private static int width;
 	private static int height;
 	private static Composite previousComposite;
+	
 	private static Stack<AffineTransform> transformations;
 	private static AffineTransform defaultTransform;
 	private static Color backgroundColour;
 	private static Font defaultFont;
+	private static Composite defaultComposite;
 	private static Graphics2D currentCanvas;
 	private static HorizontalAlign defaultHorizontalAlignment = HorizontalAlign.LEFT;
 	private static VerticalAlign defaultVerticalAlignment = VerticalAlign.TOP;
@@ -89,6 +91,7 @@ public abstract class Graphics {
 		height = Window.canvas.getHeight();
 		screen = (Graphics2D)strategy.getDrawGraphics();
 		defaultFont = screen.getFont();
+		defaultComposite = screen.getComposite();
 		previousComposite = null;
 		currentCanvas = screen;
 		transformations = new Stack<AffineTransform>();
@@ -149,6 +152,14 @@ public abstract class Graphics {
 	
 	public static Color inverse(Color c) {
 		return new Color(255 - c.getRed(), 255 - c.getGreen(), 255 - c.getBlue());
+	}
+	
+	public static void setComposite() {
+		currentCanvas.setComposite(defaultComposite);
+	}
+	
+	public static void setComposite(int comp) {
+		currentCanvas.setComposite(AlphaComposite.getInstance(comp, 1));
 	}
 	
 	public static Color getColour() {
