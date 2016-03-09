@@ -65,6 +65,10 @@ public abstract class Window {
 		window.setLocation(x, y);
 	}
 	
+	public static void setTitle(String title) {
+		window.setTitle(title);
+	}
+	
 	public static boolean isResizable() {
 		return window.isResizable();
 	}
