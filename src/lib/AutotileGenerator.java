@@ -89,7 +89,6 @@ public class AutotileGenerator {
 		Autotile autotile = autotiles.get(tile.id);
 		final int ox = (corner % 2) * 2 - 1;
 		final int oy = (corner / 2) * 2 - 1;
-		System.out.println(corner + ": " + ox + ", " + oy);
 		if (isSuperior(map, i + ox, j, tile.id) && isSuperior(map, i, j + oy, tile.id)) {
 			tile.setCorner(corner, autotile.combinations[0][corner]);
 		} else if (isSuperior(map, i + ox, j + oy, tile.id) && !isSuperior(map, i + ox, j, tile.id) && !isSuperior(map, i, j + oy, tile.id)) {
