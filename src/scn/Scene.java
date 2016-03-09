@@ -19,6 +19,9 @@ public abstract class Scene implements KeyboardEventHandler, MouseEventHandler, 
 	public void keyReleased(int key) {}
 	
 	@Override
+	public void keyTyped(char text) {}
+	
+	@Override
 	public void mousePressed(int mouseX, int mouseY, int mouseKey) {}
 	
 	@Override

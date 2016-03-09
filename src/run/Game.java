@@ -159,6 +159,12 @@ public abstract class Game implements KeyboardEventHandler, MouseEventHandler, W
 	}
 
 	@Override
+	public void keyTyped(char text) {
+		if (SceneManager.scene() != null)
+			SceneManager.scene().keyTyped(text);
+	}
+	
+	@Override
 	public void mouseMoved(int x, int y) {
 		if (SceneManager.scene() != null)
 			SceneManager.scene().mouseMoved(x, y);

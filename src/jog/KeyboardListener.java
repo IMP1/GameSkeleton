@@ -25,7 +25,12 @@ public class KeyboardListener implements KeyListener {
 	}
 	
 	@Override
-	public void keyTyped(KeyEvent e) {}
+	public void keyTyped(KeyEvent e) {
+		char c = e.getKeyChar();
+		if (c != KeyEvent.CHAR_UNDEFINED) {
+			Event.push(Event.EventType.KEY_TYPED, c);
+		}
+	}
 	
 	@Override
 	public void keyPressed(KeyEvent e) {

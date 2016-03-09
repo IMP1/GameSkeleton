@@ -43,6 +43,7 @@ public abstract class Event {
 		// Keyboard
 		KEY_PRESSED,
 		KEY_RELASED,
+		KEY_TYPED,
 		// Mouse
 		MOUSE_MOVED,
 		MOUSE_SCROLLED,
@@ -68,6 +69,7 @@ public abstract class Event {
 	public interface KeyboardEventHandler {
 		public void keyPressed(int key);
 		public void keyReleased(int key);
+		public void keyTyped(char text);
 	}
 	
 	public interface MouseEventHandler {
@@ -150,6 +152,11 @@ public abstract class Event {
 			case KEY_RELASED:
 				for (KeyboardEventHandler h : keyboardHandlers) {
 					h.keyReleased((int)e.params[0]);
+				}
+				break;
+			case KEY_TYPED:
+				for (KeyboardEventHandler h : keyboardHandlers) {
+					h.keyTyped((char)e.params[0]);
 				}
 				break;
 			case RESIZE:
