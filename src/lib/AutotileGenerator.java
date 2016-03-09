@@ -31,7 +31,7 @@ public class AutotileGenerator {
 				int corner = i % CORNER_COUNT;
 				int x = i % 2;
 				int y = i / 2;
-				combinations[category][corner] = new Rectangle(quad.x + x + w, quad.y + y * h, w, h);
+				combinations[category][corner] = new Rectangle(quad.x + x * w, quad.y + y * h, w, h);
 			}
 		}
 		
@@ -87,8 +87,9 @@ public class AutotileGenerator {
 	private static void determineCorner(final Tile[][] map, final int i, final int j, final int corner) {
 		Tile tile = map[j][i];
 		Autotile autotile = autotiles.get(tile.id);
-		int ox = (corner % 2) * 2 - 1;
-		int oy = (corner / 2) * 2 - 1;
+		final int ox = (corner % 2) * 2 - 1;
+		final int oy = (corner / 2) * 2 - 1;
+		System.out.println(corner + ": " + ox + ", " + oy);
 		if (isSuperior(map, i + ox, j, tile.id) && isSuperior(map, i, j + oy, tile.id)) {
 			tile.setCorner(corner, autotile.combinations[0][corner]);
 		} else if (isSuperior(map, i + ox, j + oy, tile.id) && !isSuperior(map, i + ox, j, tile.id) && !isSuperior(map, i, j + oy, tile.id)) {
