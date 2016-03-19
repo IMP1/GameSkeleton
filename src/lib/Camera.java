@@ -110,27 +110,51 @@ public class Camera {
 		bounds = new Rectangle(minX, minY, maxX - minX, maxY - minY);
 	}
 	
+	/**
+	 * Returns the horizontal world position of the mouse cursor.
+	 * @return the x coordinate of the <em>world</em> position of the cursor.
+	 */
 	public double getMouseWorldX() {
 		return getWorldX(jog.Input.getMouseX());
 	}
 	
+	/**
+	 * Returns the vertical world position of the mouse cursor.
+	 * @return the y coordinate of the <em>world</em> position of the cursor.
+	 */
 	public double getMouseWorldY() {
 		return getWorldY(jog.Input.getMouseY());
 	}
 	
+	/**
+	 * Returns the horizontal screen position of the world position.
+	 * @return the x coordinate of the <em>screen</em> position
+	 */
 	public double getScreenX(double worldX) {
 		// TODO: these need to include scale
 		return worldX - x;
 	}
 	
+	/**
+	 * Returns the vertical screen position of the world position.
+	 * @return the y coordinate of the <em>screen</em> position
+	 */
 	public double getScreenY(double worldY) {
 		return worldY - y;
 	}
 	
+	/**
+	 * Returns the horizontal world position of the world position.
+	 * @return the x coordinate of the <em>world</em> position
+	 */
 	public double getWorldX(double screenX) {
 		return screenX + x;
 	}
 	
+	/**
+	 * Returns the vertical world position of the world position.
+	 * @return the y coordinate of the <em>world</em> position
+	 */
 	public double getWorldY(double screenY) {
 		return screenY + y;
 	}
