@@ -64,6 +64,36 @@ public abstract class Graphics {
 		public int getHeight() {
 			return image.getHeight();
 		}
+
+		public void clear() {
+			clear(0, 0, image.getWidth(), image.getHeight());
+		}
+		
+		public void clear(int x, int y, int width, int height) {
+			Graphics2D g = (Graphics2D)image.getGraphics();
+			g.setComposite(AlphaComposite.getInstance(AlphaComposite.CLEAR));
+			g.setColor(new Color(0, 0, 0, 0));
+			g.fillRect(x, y, width, height);
+			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
+		}
+		
+		public void setPixel(int x, int y, int r, int g, int b) {
+			setPixel(x, y, r, g, b, 255);
+		}
+		public void setPixel(int x, int y, int r, int g, int b, int a) {
+			setPixel(x, y, new Color(r, g, b, a));
+		}
+		public void setPixel(int x, int y, Color colour) {
+			image.setRGB(x, y, colour.getRGB());
+		}
+		
+		public Image copy(int x, int y, int w, int h) {
+			return new Image(image.getSubimage(x, y, w, h));
+		}
+		
+		public void paste(Image img, int x, int y) {
+			image.getGraphics().drawImage(img.image, x, y, null);
+		}
 		
 		protected void draw(Graphics2D g, double x, double y) {
 			g.drawImage(image, (int)x, (int)y, null);
@@ -75,7 +105,7 @@ public abstract class Graphics {
 		
 	}
 	
-	public static class Canvas extends Drawable {
+	public static class Canvas extends Image {
 		private final Graphics2D graphics;
 		private Canvas(int width, int height) {
 			super(new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB));
