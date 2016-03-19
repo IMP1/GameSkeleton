@@ -44,6 +44,13 @@ public abstract class Game implements KeyboardEventHandler, MouseEventHandler, W
 		close();
 	}
 	
+	/**
+	 * Sets up jog classes.
+	 * @param width the width of the window.
+	 * @param height the height of the window.
+	 * @param title the title of the window.
+	 * @param windowMode the WindowMode of the window.
+	 */
 	protected void initialise(final int width, final int height, final String title, final jog.Window.WindowMode windowMode) {
 		jog.Window.initialise(width, height, title, windowMode);
 		jog.Input.initialise();
@@ -53,12 +60,24 @@ public abstract class Game implements KeyboardEventHandler, MouseEventHandler, W
 		jog.Graphics.initialise();
 	}
 	
+	/**
+	 * Is run after initialise, and is used for loading resources/data and maintainace before the game begins.
+	 */
 	protected void setup() {}
 	
+	/**
+	 * Starts the first scene.
+	 * @param startingScene
+	 */
 	protected void begin(Scene startingScene) {
 		SceneManager.changeScene(startingScene);
 	}
 	
+	/**
+	 * Calculates dt and performs updates and draw calls.
+	 * @param fixedTimestep whether to use fixed timesteps.
+	 * @param maxDT the highest time between frames that is allowed before calling update multiple times.
+	 */
 	protected void gameLoop(final boolean fixedTimestep, final double maxDT) {
 		Timer.getDeltaTime();
 		while (jog.Window.isOpen()) {
