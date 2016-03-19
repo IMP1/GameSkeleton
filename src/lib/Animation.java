@@ -18,7 +18,6 @@ public class Animation extends Drawable {
 	private double timer;
 	private boolean started;
 	private boolean finished;
-	
 
 	public Animation(Image img, int framesWide, int framesHigh, int frames, boolean loop, double... frameTimes) {
 		super(img);
@@ -49,6 +48,10 @@ public class Animation extends Drawable {
 	
 	public boolean isPlaying() {
 		return started && !finished;
+	}
+	
+	public boolean hasFinished() {
+		return started && finished;
 	}
 	
 	public void update(double dt) {
