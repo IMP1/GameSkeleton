@@ -2,14 +2,13 @@ package lib;
 
 import java.awt.Font;
 import java.awt.event.KeyEvent;
+import java.util.Arrays;
 import java.util.HashMap;
-
-import scn.SceneManager;
 
 public class Console implements jog.Event.KeyboardEventHandler {
 
 	public interface Action {
-		public void act(scn.Scene currentScene);
+		public void act(String... args);
 	}
 	
 	public static final int FONT_SIZE = 24;
@@ -69,9 +68,12 @@ public class Console implements jog.Event.KeyboardEventHandler {
 	}
 	
 	private void act() {
-		String action = currentText.toString();
-		if (actions.containsKey(action)) {
-			actions.get(action).act(SceneManager.scene());
+		String line = currentText.toString();
+		String tokens[] = line.split(" ");
+		String action = tokens[0];
+		if (isRegisteredAction(action)) {
+			String args[] = Arrays.copyOfRange(tokens, 1, tokens.length);
+			actions.get(action).act(args);
 		}
 		if (!jog.Input.isKeyDown(keepModifier)) {
 			reset();
@@ -79,6 +81,10 @@ public class Console implements jog.Event.KeyboardEventHandler {
 		if (!jog.Input.isKeyDown(stayModifier)) {
 			hide();
 		}
+	}
+	
+	private boolean isRegisteredAction(String action) {
+		return actions.containsKey(action);
 	}
 
 	@Override
