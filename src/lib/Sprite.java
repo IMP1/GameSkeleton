@@ -17,7 +17,6 @@ public class Sprite extends jog.Graphics.Drawable {
 	
 	public Sprite(jog.Image img, int poses, int frames, double frameTime) {
 		super(img);
-		System.out.println(img);
 		frameCount = frames;
 		poseCount = poses;
 		frameDuration = frameTime;
@@ -66,10 +65,6 @@ public class Sprite extends jog.Graphics.Drawable {
 	protected void draw(Graphics2D g, double x, double y) {
 		super.drawq(g, quads[currentPose][currentFrame], x, y);
 	}
-	
-//	public void draw(double x, double y) {
-//		jog.Graphics.draw(image, quads[currentPose][currentFrame], x, y);
-//	}
 	
 	private double currentFrameDuration() {
 		return frameDuration;
