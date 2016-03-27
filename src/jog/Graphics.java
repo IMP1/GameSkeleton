@@ -1,6 +1,7 @@
 package jog;
 
 import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Font;
@@ -252,7 +253,11 @@ public abstract class Graphics {
 	}
 	
 	public static Rectangle getScissor() {
-		return currentGraphics.getClipBounds();
+		if (currentGraphics.getClipBounds() == null) {
+			return new Rectangle(0, 0, getWidth(), getHeight());
+		} else {
+			return currentGraphics.getClipBounds();
+		}
 	}
 	
 	public static Canvas newCanvas() {
@@ -314,6 +319,10 @@ public abstract class Graphics {
 		return currentGraphics.getFontMetrics().getHeight() * lines;
 	}
 	
+	public static void setLineWidth(int lineWidth) {
+		currentGraphics.setStroke(new BasicStroke(lineWidth));
+	}
+	
 	public static void rectangle(boolean fill, Rectangle rect) {
 		rectangle(fill, rect.x, rect.y, rect.width, rect.height);
 	}
@@ -334,6 +343,18 @@ public abstract class Graphics {
 		}
 	}
 	
+	public static void ellipse(boolean fill, double x, double y, double xRadius, double yRadius) {
+		int width = (int)xRadius * 2;
+		int height = (int)yRadius * 2;
+		x -= width / 2;
+		y -= height / 2;
+		if (fill) {
+			currentGraphics.fillOval((int)x, (int)y, width, height);
+		} else {
+			currentGraphics.drawOval((int)x, (int)y, width, height);
+		}
+	}
+	
 	public static void arc(boolean fill, double x, double y, double radius, double startAngle, double endAngle) {
 		// Angles negated so clockwise is positive.
 		int angleBegin = -(int)Math.toDegrees(startAngle);
@@ -351,6 +372,10 @@ public abstract class Graphics {
 	
 	public static void circle(boolean fill, double x, double y, double radius) {
 		arc(fill, x, y, radius, 0, Math.PI * 2);
+	}
+	
+	public static void point(double x, double y) {
+		line(x, y, x, y);
 	}
 	
 	public static void line(double... points) {
