@@ -1,14 +1,14 @@
 package lib;
 
+import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
-public class Sprite {
+public class Sprite extends jog.Graphics.Drawable {
 
 	private double frameDuration;
 	private int poseCount;
 	private int frameCount;
 	
-	private jog.Image image;
 	private Rectangle[][] quads;
 	
 	private int currentFrame;
@@ -16,7 +16,8 @@ public class Sprite {
 	private double timer;
 	
 	public Sprite(jog.Image img, int poses, int frames, double frameTime) {
-		image = img;
+		super(img);
+		System.out.println(img);
 		frameCount = frames;
 		poseCount = poses;
 		frameDuration = frameTime;
@@ -32,6 +33,16 @@ public class Sprite {
 		}
 		reset();
 		setPose(0);
+	}
+	
+	@Override
+	public int getWidth() {
+		return quads[currentPose][currentFrame].width;
+	}
+	
+	@Override
+	public int getHeight() {
+		return quads[currentPose][currentFrame].height;
 	}
 	
 	public void reset() {
@@ -51,9 +62,14 @@ public class Sprite {
 		}
 	}
 	
-	public void draw(double x, double y) {
-		jog.Graphics.draw(image, quads[currentPose][currentFrame], x, y);
+	@Override
+	protected void draw(Graphics2D g, double x, double y) {
+		super.drawq(g, quads[currentPose][currentFrame], x, y);
 	}
+	
+//	public void draw(double x, double y) {
+//		jog.Graphics.draw(image, quads[currentPose][currentFrame], x, y);
+//	}
 	
 	private double currentFrameDuration() {
 		return frameDuration;
