@@ -31,7 +31,6 @@ public abstract class Graphics {
 	private static Color backgroundColour;
 	private static Font defaultFont;
 	private static Composite defaultComposite;
-	private static Canvas currentCanvas;
 	private static Graphics2D currentGraphics;
 	private static HorizontalAlign defaultHorizontalAlignment = HorizontalAlign.LEFT;
 	private static VerticalAlign defaultVerticalAlignment = VerticalAlign.TOP;
@@ -125,7 +124,6 @@ public abstract class Graphics {
 		defaultFont = screen.getFont();
 		defaultComposite = screen.getComposite();
 		previousComposite = null;
-		currentCanvas = null;
 		currentGraphics = screen;
 		transformations = new Stack<AffineTransform>();
 		defaultTransform = currentGraphics.getTransform();
@@ -155,32 +153,65 @@ public abstract class Graphics {
 		}
 	}
 	
-	public static void draw(Drawable img, double x, double y, double scale) {
-		push();
-		translate(x, y);
-		scale(scale);
-		draw(img, 0, 0);
-		pop();
-	}
-	
 	public static void draw(Drawable img, double x, double y) {
 		setImageColour();
 		img.draw(currentGraphics, x, y);
 		resetImageColour();
 	}
-	
-	public static void draw(Drawable img, Rectangle quad, double x, double y, double scale) {
+	public static void draw(Drawable img, double x, double y, double scale) {
+		draw(img, x, y, scale, scale);
+	}
+	public static void draw(Drawable img, double x, double y, double scaleX, double scaleY) {
+		draw(img, x, y, scaleX, scaleY, 0);
+	}
+	public static void draw(Drawable img, double x, double y, double scaleX, double scaleY, double rotation) {
+		draw(img, x, y, scaleX, scaleY, rotation, 0);
+	}
+	public static void draw(Drawable img, double x, double y, double scaleX, double scaleY, double rotation, double offset) {
+		draw(img, x, y, scaleX, scaleY, rotation, offset, offset);
+	}
+	public static void draw(Drawable img, double x, double y, double scaleX, double scaleY, double rotation, double ox, double oy) {
 		push();
-		translate(x, y);
-		scale(scale);
-		draw(img, quad, 0, 0);
+		translate(x + ox, y + oy);
+		scale(scaleX, scaleY);
+		rotate(rotation);
+		draw(img, -ox, -oy);
 		pop();
 	}
-
+	
 	public static void draw(Drawable img, Rectangle quad, double x, double y) {
 		setImageColour();
 		img.drawq(currentGraphics, quad, x, y);
 		resetImageColour();
+	}
+	public static void draw(Drawable img, Rectangle quad, double x, double y, double scale) {
+		draw(img, quad, x, y, scale, scale);
+	}
+	public static void draw(Drawable img, Rectangle quad, double x, double y, double scaleX, double scaleY) {
+		draw(img, quad, x, y, scaleX, scaleY, 0);
+	}
+	public static void draw(Drawable img, Rectangle quad, double x, double y, double scaleX, double scaleY, double rotation) {
+		draw(img, quad, x, y, scaleX, scaleY, rotation, 0);
+	}
+	public static void draw(Drawable img, Rectangle quad, double x, double y, double scaleX, double scaleY, double rotation, double offset) {
+		draw(img, quad, x, y, scaleX, scaleY, rotation, offset, offset);
+	}
+	public static void draw(Drawable img, Rectangle quad, double x, double y, double scaleX, double scaleY, double rotation, double ox, double oy) {
+		push();
+		translate(x + ox, y + oy);
+		scale(scaleX, scaleY);
+		rotate(rotation);
+		draw(img, quad, -ox, -oy);
+		pop();
+	}
+	
+	public static Image getImage() {
+		System.out.println("getting image");
+		Image img = new Image(getWidth(), getHeight());
+		Graphics2D g = img.image.createGraphics();
+		Window.getContainer().printAll(g);
+		g.dispose();
+		return img;
 	}
 	
 	public static Color inverse(Color c) {
@@ -229,19 +260,11 @@ public abstract class Graphics {
 	}
 	
 	public static int getWidth() {
-		if (currentCanvas == null) {
-			return Window.getWidth();
-		} else {
-			return currentCanvas.getWidth();
-		}
+		return Window.getWidth();
 	}
 	
 	public static int getHeight() {
-		if (currentCanvas == null) {
-			return Window.getHeight();
-		} else {
-			return currentCanvas.getHeight();
-		}
+		return Window.getHeight();
 	}
 	
 	public static void setScissor() {
