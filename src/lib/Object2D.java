@@ -6,4 +6,6 @@ public interface Object2D {
 	
 	public int getY();
 	
+	public void setPosition(int x, int y);
+	
 }
