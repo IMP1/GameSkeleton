@@ -179,6 +179,10 @@ public abstract class Window {
 		window.addComponentListener(listener);
 	}
 	
+	protected static java.awt.Container getContainer() {
+		return window.getContentPane();
+	}
+	
 	public static void setIcon(String... filepaths) {
 		ArrayList<java.awt.Image> icons = new ArrayList<java.awt.Image>();
 		for (String path : filepaths) {
