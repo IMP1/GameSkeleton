@@ -222,7 +222,7 @@ public abstract class Network {
 			clientWriters.put(newName, clientWriters.get(oldName));
 			clientWriters.remove(oldName);
 			for (ClientListener client : clientReaders) {
-				if (client.name == oldName) client.name = newName;
+				if (client.name.equals(oldName)) client.name = newName;
 			}
 		}
 		
