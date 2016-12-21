@@ -72,7 +72,7 @@ public abstract class Filesystem {
 	 * @param filename the filename of the file to search for.
 	 * @return the file object.
 	 */
-	private static File getFile(String filename) {
+	public static File getFile(String filename) {
 		String path = "";
 		File f;
 		for (String loc : locations) {
